@@ -11,6 +11,7 @@ use piston::*;
 mod app;
 mod board;
 mod settings;
+mod tile;
 
 type GameWindowBackEnd = GameWindowSDL2;
 
