@@ -9,6 +9,7 @@ extern crate piston;
 use piston::*;
 
 mod app;
+mod board;
 mod settings;
 
 type GameWindowBackEnd = GameWindowSDL2;
