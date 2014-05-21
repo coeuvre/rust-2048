@@ -61,7 +61,7 @@ impl Board {
 
                 tiles_need_removed.insert(i);
                 tiles_need_removed.insert(j);
-                tiles_need_added.push(Tile::new(tile1.score + tile2.score, tile1.tile_x, tile1.tile_y));
+                tiles_need_added.push(Tile::new_combined(tile1.score + tile2.score, tile1.tile_x, tile1.tile_y));
                 break;
             }
         }
@@ -112,6 +112,7 @@ impl Board {
                         None => {
                             match self.get_mut_next_tile(col, row, x_step, 0) {
                                 Some(ref mut tile) => {
+                                    println!("move ({}, {}) to ({}, {})", tile.tile_x, tile.tile_y, col, row);
                                     tile.start_moving(col, row);
                                 },
                                 _ => {},
@@ -284,15 +285,8 @@ impl Board {
     }
 
     fn render_tiles(&self, c: &Context, gl: &mut Gl) {
-        for row in range(0, settings::TILE_HEIGHT) {
-            for col in range(0, settings::TILE_WIDTH) {
-                match self.get_tile(col, row) {
-                    Some(ref tile) => {
-                        tile.render(c, gl);
-                    },
-                    _ => {},
-                }
-            }
+        for tile in self.tiles.iter() {
+            tile.render(c, gl);
         }
     }
 }
