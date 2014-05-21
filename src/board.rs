@@ -12,12 +12,16 @@ use tile::{
 
 pub struct Board {
     tiles: Vec<Tile>,
+    score: int,
+    highest_score: int,
 }
 
 impl Board {
     pub fn new() -> Board {
         Board {
             tiles: Vec::<Tile>::new(),
+            score: 0,
+            highest_score: 0,
         }
     }
 
@@ -44,6 +48,7 @@ impl Board {
         if self.is_locking() {
             return;
         }
+        let mut score_to_added = 0;
         let mut tiles_need_removed = HashSet::<uint>::new();
         let mut tiles_need_added = Vec::<Tile>::new();
         for i in range(0, self.tiles.len()) {
@@ -62,6 +67,7 @@ impl Board {
                 tiles_need_removed.insert(i);
                 tiles_need_removed.insert(j);
                 tiles_need_added.push(Tile::new_combined(tile1.score + tile2.score, tile1.tile_x, tile1.tile_y));
+                score_to_added += tile1.score + tile2.score;
                 break;
             }
         }
@@ -74,6 +80,7 @@ impl Board {
                 }
             }
             self.tiles = tiles.append(tiles_need_added.as_slice());
+            self.add_score(score_to_added);
         }
     }
 
@@ -359,6 +366,14 @@ impl Board {
         for tile in self.tiles.iter() {
             tile.render(c, gl);
         }
+    }
+
+    fn add_score(&mut self, score: int) {
+        self.score += score;
+        if self.score > self.highest_score {
+            self.highest_score = self.score;
+        }
+        println!("Score: {}, Highest Score: {}", self.score, self.highest_score);
     }
 }
 
