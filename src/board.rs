@@ -82,15 +82,6 @@ impl Board {
         self.render_tiles(c, gl);
     }
 
-    pub fn can_merge(&self) -> bool {
-        for row in range(0, settings::TILE_HEIGHT) {
-            if !self.can_merge_row(row) {
-                return false;
-            }
-        }
-        true
-    }
-
     pub fn merge_from_bottom_to_top(&mut self) {
         self.merge_col(0, settings::TILE_HEIGHT, 1);
     }
@@ -258,25 +249,6 @@ impl Board {
         }
     }
 
-    fn can_merge_row(&self, row: int) -> bool {
-        for col in range(0, settings::TILE_WIDTH) {
-            match self.get_tile(col, row) {
-                Some(ref tile) => {
-                    match self.get_next_tile(tile.tile_x, tile.tile_y, 1, 0) {
-                        Some(ref s_tile) => {
-                            if tile.score == s_tile.score {
-                                return true;
-                            }
-                        },
-                        _ => {},
-                    }
-                },
-                None => {},
-            }
-        }
-        false
-    }
-
     fn is_locking(&self) -> bool {
         for tile in self.tiles.iter() {
             if tile.status != TileStatic {
@@ -353,8 +325,6 @@ impl Board {
     }
 
     fn render_board(&self, c: &Context, gl: &mut Gl) {
-        let width = settings::TILE_SIZE * settings::TILE_WIDTH as f64 + settings::TILE_PADDING * (settings::TILE_WIDTH + 1) as f64;
-        let height = settings::TILE_SIZE * settings::TILE_HEIGHT as f64 + settings::TILE_PADDING * (settings::TILE_HEIGHT + 1) as f64;
         c.view()
          .rect(settings::BOARD_PADDING,
                settings::BOARD_PADDING + settings::BOARD_OFFSET_Y,

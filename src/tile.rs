@@ -91,7 +91,7 @@ impl Tile {
                     let factor = dt / t;
                     self.status = TileCombine(t - dt, size + factor * (settings::TILE_SIZE - size));
                 }
-            }
+            },
             _ => {},
         }
     }
