@@ -91,6 +91,85 @@ impl Board {
         true
     }
 
+    pub fn merge_from_bottom_to_top(&mut self) {
+        self.merge_col(0, settings::TILE_HEIGHT, 1);
+    }
+
+    pub fn merge_from_top_to_bottom(&mut self) {
+        self.merge_col(settings::TILE_HEIGHT - 1, -1, -1);
+    }
+
+    fn merge_col(&mut self, y_start: int, y_end: int, y_step: int) {
+        if self.is_locking() {
+            return;
+        }
+
+        let mut need_generate = false;
+        loop {
+            // move all tiles to right place
+            for col in range(0, settings::TILE_WIDTH) {
+                for row in range_step(y_start, y_end, y_step) {
+                    match self.get_mut_tile(col, row) {
+                        None => {
+                            match self.get_mut_next_tile(col, row, 0, y_step) {
+                                Some(ref mut tile) => {
+                                    println!("move ({}, {}) to ({}, {})",
+                                             tile.tile_x, tile.tile_y, col, row);
+                                    tile.start_moving(col, row);
+                                },
+                                _ => {},
+                            }
+                        },
+                        _ => {},
+                    }
+                }
+            }
+
+            let mut did_merged = false;
+            for col in range(0, settings::TILE_WIDTH) {
+                let mut found = false;
+                let mut sx = 0;
+                let mut sy = 0;
+                let mut dx = 0;
+                let mut dy = 0;
+                for row in range_step(y_start, y_end, y_step) {
+                    match self.get_tile(col, row) {
+                        Some(ref d_tile) => {
+                            match self.get_next_tile(col, row, 0, y_step) {
+                                Some(ref s_tile) if d_tile.score == s_tile.score => {
+                                    found = true;
+                                    dx = d_tile.tile_x;
+                                    dy = d_tile.tile_y;
+                                    sx = s_tile.tile_x;
+                                    sy = s_tile.tile_y;
+                                    break;
+                                },
+                                _ => {},
+                            }
+                        },
+                        None => {
+                            break;
+                        }
+                    }
+                }
+                if found {
+                    need_generate = true;
+                    did_merged = true;
+                    let mut tile = self.get_mut_tile(sx, sy);
+                    let tile = tile.get_mut_ref();
+                    tile.start_moving(dx, dy);
+                }
+            }
+
+            if !did_merged {
+                break;
+            }
+        }
+        if need_generate {
+            self.generate_tile();
+        }
+    }
+
     pub fn merge_from_left_to_right(&mut self) {
         self.merge_row(settings::TILE_WIDTH - 1, -1, -1);
     }
@@ -104,6 +183,7 @@ impl Board {
             return;
         }
 
+        let mut need_generate = false;
         loop {
             // move all tiles to right place
             for row in range(0, settings::TILE_HEIGHT) {
@@ -113,6 +193,7 @@ impl Board {
                             match self.get_mut_next_tile(col, row, x_step, 0) {
                                 Some(ref mut tile) => {
                                     println!("move ({}, {}) to ({}, {})", tile.tile_x, tile.tile_y, col, row);
+                                    need_generate = true;
                                     tile.start_moving(col, row);
                                 },
                                 _ => {},
@@ -152,9 +233,10 @@ impl Board {
                     }
                 }
                 if found {
+                    need_generate = true;
                     did_merged = true;
                     let mut tile = self.get_mut_tile(sx, sy);
-                    let mut tile = tile.get_mut_ref();
+                    let tile = tile.get_mut_ref();
                     tile.start_moving(dx, dy);
                 }
             }
@@ -164,7 +246,9 @@ impl Board {
             }
         }
 
-        self.generate_tile();
+        if need_generate {
+            self.generate_tile();
+        }
     }
 
     fn can_merge_row(&self, row: int) -> bool {

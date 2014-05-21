@@ -41,6 +41,12 @@ impl Game for App {
         if key == keyboard::Right {
             self.board.merge_from_left_to_right();
         }
+        if key == keyboard::Up {
+            self.board.merge_from_bottom_to_top();
+        }
+        if key == keyboard::Down {
+            self.board.merge_from_top_to_bottom();
+        }
     }
 
     fn key_release(
