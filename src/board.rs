@@ -18,11 +18,14 @@ pub struct Board {
 
 impl Board {
     pub fn new() -> Board {
-        Board {
+        let mut board = Board {
             tiles: Vec::<Tile>::new(),
             score: 0,
             highest_score: 0,
-        }
+        };
+        board.generate_tile();
+        board.generate_tile();
+        board
     }
 
     pub fn generate_tile(&mut self) {

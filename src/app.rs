@@ -26,8 +26,6 @@ impl Game for App {
     }
 
     fn load(&mut self, _asset_store: &mut AssetStore) {
-        self.board.generate_tile();
-        self.board.generate_tile();
     }
 
     fn key_press(
@@ -46,6 +44,9 @@ impl Game for App {
         }
         if key == keyboard::Down {
             self.board.merge_from_top_to_bottom();
+        }
+        if key == keyboard::Space {
+            self.board = Board::new();
         }
     }
 
