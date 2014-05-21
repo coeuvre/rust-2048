@@ -3,13 +3,14 @@ use graphics::*;
 use piston::*;
 use settings;
 
-#[deriving(Eq)]
+#[deriving(Clone, Eq)]
 pub enum TileState {
     TileStatic,
     /// (t, x, y)
     TileMoving(f64, f64, f64),
 }
 
+#[deriving(Clone)]
 pub struct Tile {
     pub score: int,
     pub tile_x: int,
@@ -81,3 +82,4 @@ impl Tile {
         }
     }
 }
+

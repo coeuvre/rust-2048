@@ -1,5 +1,6 @@
 
 use std::iter::range_step;
+use collections::hashmap::HashSet;
 use rand::random;
 use graphics::*;
 use piston::*;
@@ -25,7 +26,7 @@ impl Board {
             return;
         }
 
-        'generating: loop {
+        loop {
             let x = (random::<uint>() % settings::TILE_WIDTH as uint) as int;
             let y = (random::<uint>() % settings::TILE_HEIGHT as uint) as int;
             if self.get_tile(x, y).is_none() {
@@ -38,6 +39,41 @@ impl Board {
     pub fn update(&mut self, dt: f64) {
         for tile in self.tiles.mut_iter() {
             tile.update(dt);
+        }
+
+        if self.is_locking() {
+            return;
+        }
+        let mut tiles_need_removed = HashSet::<uint>::new();
+        let mut tiles_need_added = Vec::<Tile>::new();
+        for i in range(0, self.tiles.len()) {
+            let tile1 = self.tiles.get(i);
+            if tile1.status != TileStatic {
+                continue;
+            }
+            for j in range(i + 1, self.tiles.len()) {
+                let tile2 = self.tiles.get(j);
+                if tile2.status != TileStatic
+                   || tile1.tile_x != tile2.tile_x
+                   || tile1.tile_y != tile2.tile_y {
+                    continue;
+                }
+
+                tiles_need_removed.insert(i);
+                tiles_need_removed.insert(j);
+                tiles_need_added.push(Tile::new(tile1.score + tile2.score, tile1.tile_x, tile1.tile_y));
+                break;
+            }
+        }
+
+        if tiles_need_removed.len() > 0 {
+            let mut tiles = Vec::<Tile>::new();
+            for i in range(0, self.tiles.len()) {
+                if !tiles_need_removed.contains(&i) {
+                    tiles.push(*self.tiles.get(i));
+                }
+            }
+            self.tiles = tiles.append(tiles_need_added.as_slice());
         }
     }
 
@@ -68,24 +104,64 @@ impl Board {
             return;
         }
 
-        // move all tiles to right place
-        for row in range(0, settings::TILE_HEIGHT) {
-            for col in range_step(x_start, x_end, x_step) {
-                match self.get_mut_tile(col, row) {
-                    None => {
-                        match self.get_mut_next_tile(col, row, x_step, 0) {
-                            Some(ref mut tile) => {
-                                tile.start_moving(col, row);
-                            },
-                            _ => {},
-                        }
-                    },
-                    _ => {},
+        loop {
+            // move all tiles to right place
+            for row in range(0, settings::TILE_HEIGHT) {
+                for col in range_step(x_start, x_end, x_step) {
+                    match self.get_mut_tile(col, row) {
+                        None => {
+                            match self.get_mut_next_tile(col, row, x_step, 0) {
+                                Some(ref mut tile) => {
+                                    tile.start_moving(col, row);
+                                },
+                                _ => {},
+                            }
+                        },
+                        _ => {},
+                    }
                 }
             }
-        }
 
-        // merge
+            // merge
+            let mut did_merged = false;
+            for row in range(0, settings::TILE_HEIGHT) {
+                let mut found = false;
+                let mut sx = 0;
+                let mut sy = 0;
+                let mut dx = 0;
+                let mut dy = 0;
+                for col in range_step(x_start, x_end, x_step) {
+                    match self.get_tile(col, row) {
+                        Some(ref d_tile) => {
+                            match self.get_next_tile(col, row, x_step, 0) {
+                                Some(ref s_tile) if d_tile.score == s_tile.score => {
+                                    found = true;
+                                    dx = d_tile.tile_x;
+                                    dy = d_tile.tile_y;
+                                    sx = s_tile.tile_x;
+                                    sy = s_tile.tile_y;
+                                    break;
+                                },
+                                _ => {},
+                            }
+                        },
+                        None => {
+                            break;
+                        }
+                    }
+                }
+                if found {
+                    did_merged = true;
+                    let mut tile = self.get_mut_tile(sx, sy);
+                    let mut tile = tile.get_mut_ref();
+                    tile.start_moving(dx, dy);
+                }
+            }
+
+            if !did_merged {
+                break;
+            }
+        }
 
         self.generate_tile();
     }
@@ -190,8 +266,8 @@ impl Board {
 
         let mut x = settings::BOARD_PADDING + settings::TILE_PADDING;
         let mut y = settings::BOARD_PADDING + settings::BOARD_OFFSET_Y + settings::TILE_PADDING;
-        for row in range(0, settings::TILE_HEIGHT) {
-            for col in range(0, settings::TILE_WIDTH) {
+        for _ in range(0, settings::TILE_HEIGHT) {
+            for _ in range(0, settings::TILE_WIDTH) {
                 c.view()
                  .rect(x, y, settings::TILE_SIZE, settings::TILE_SIZE)
                  .rgba(settings::TILES_COLOR[0][0],

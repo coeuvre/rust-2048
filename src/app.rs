@@ -3,7 +3,6 @@ use graphics::*;
 use piston::*;
 
 use board::Board;
-use settings;
 
 pub struct App {
     board: Board,
@@ -50,3 +49,4 @@ impl Game for App {
         _asset_store: &mut AssetStore
     ) {}
 }
+
