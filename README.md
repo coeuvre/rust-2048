@@ -13,7 +13,7 @@ Dependencies
 
 How to play
 -----------
-Use array key to move tiles.
+Use arrow key to move tiles.
 
 ![alt tag](./rust-2048.png)
 
