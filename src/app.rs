@@ -3,6 +3,7 @@ use graphics::*;
 use piston::*;
 
 use board::Board;
+use settings;
 
 pub struct App {
     board: Board,
@@ -21,15 +22,25 @@ impl Game for App {
         self.board.render(c, gl);
     }
 
-    fn update(&mut self, _dt: f64, _asset_store: &mut AssetStore) {}
+    fn update(&mut self, dt: f64, _asset_store: &mut AssetStore) {
+        self.board.update(dt);
+    }
 
-    fn load(&mut self, _asset_store: &mut AssetStore) {}
+    fn load(&mut self, _asset_store: &mut AssetStore) {
+    }
 
     fn key_press(
         &mut self,
-        _key: keyboard::Key,
+        key: keyboard::Key,
         _asset_store: &mut AssetStore
-    ) {}
+    ) {
+        if key == keyboard::Left {
+            self.board.test_tile.start_moving(settings::TILE_MOVE_TIME, 0, 0);
+        }
+        if key == keyboard::Right {
+            self.board.test_tile.start_moving(settings::TILE_MOVE_TIME, 3, 0);
+        }
+    }
 
     fn key_release(
         &mut self,

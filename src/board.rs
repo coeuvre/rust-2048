@@ -7,6 +7,7 @@ use tile::Tile;
 pub struct Board {
     center: [f64, ..2],
     tiles: [[Option<Tile>, ..settings::TILE_WIDTH], ..settings::TILE_HEIGHT],
+    pub test_tile: Tile,
 }
 
 impl Board {
@@ -19,13 +20,18 @@ impl Board {
                 [None, None, None, None],
                 [None, None, None, None],
             ],
+            test_tile: Tile::new(16, 0, 0),
         }
+    }
+
+    pub fn update(&mut self, dt: f64) {
+        self.test_tile.update(dt);
     }
 
     pub fn render(&self, c: &Context, gl: &mut Gl) {
         self.render_board(c, gl);
         self.render_tiles(c, gl);
-        Tile::new(16, 0, 0).render(c, gl);
+        self.test_tile.render(c, gl);
     }
 
     fn render_board(&self, c: &Context, gl: &mut Gl) {
