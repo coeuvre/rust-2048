@@ -115,6 +115,7 @@ impl Board {
                                 Some(ref mut tile) => {
                                     println!("move ({}, {}) to ({}, {})",
                                              tile.tile_x, tile.tile_y, col, row);
+                                    need_generate = true;
                                     tile.start_moving(col, row);
                                 },
                                 _ => {},
@@ -160,6 +161,7 @@ impl Board {
                     let mut tile = self.get_mut_tile(sx, sy);
                     let tile = tile.get_mut_ref();
                     tile.start_moving(dx, dy);
+                    println!("merge ({}, {}) to ({}, {})", sx, sy, dx, dy);
                 }
             }
 
@@ -242,6 +244,7 @@ impl Board {
                     let mut tile = self.get_mut_tile(sx, sy);
                     let tile = tile.get_mut_ref();
                     tile.start_moving(dx, dy);
+                    println!("merge ({}, {}) to ({}, {})", sx, sy, dx, dy);
                 }
             }
 
