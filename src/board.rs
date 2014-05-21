@@ -136,7 +136,9 @@ impl Board {
                     match self.get_tile(col, row) {
                         Some(ref d_tile) => {
                             match self.get_next_tile(col, row, 0, y_step) {
-                                Some(ref s_tile) if d_tile.score == s_tile.score => {
+                                Some(ref s_tile)
+                                if d_tile.score == s_tile.score
+                                   && self.get_tile_count(d_tile.tile_x, d_tile.tile_y) == 1 => {
                                     found = true;
                                     dx = d_tile.tile_x;
                                     dy = d_tile.tile_y;
@@ -216,7 +218,9 @@ impl Board {
                     match self.get_tile(col, row) {
                         Some(ref d_tile) => {
                             match self.get_next_tile(col, row, x_step, 0) {
-                                Some(ref s_tile) if d_tile.score == s_tile.score => {
+                                Some(ref s_tile)
+                                if d_tile.score == s_tile.score
+                                   && self.get_tile_count(d_tile.tile_x, d_tile.tile_y) == 1 => {
                                     found = true;
                                     dx = d_tile.tile_x;
                                     dy = d_tile.tile_y;
@@ -333,6 +337,16 @@ impl Board {
             }
         }
         None
+    }
+
+    fn get_tile_count(&self, x: int, y: int) -> int {
+        let mut count = 0;
+        for tile in self.tiles.iter() {
+            if tile.tile_x == x && tile.tile_y == y {
+                count += 1;
+            }
+        }
+        count
     }
 
     fn render_board(&self, c: &Context, gl: &mut Gl) {
