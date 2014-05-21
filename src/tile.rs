@@ -3,17 +3,18 @@ use graphics::*;
 use piston::*;
 use settings;
 
-enum TileState {
+#[deriving(Eq)]
+pub enum TileState {
     TileStatic,
-    /// (t, x, y, destination_tile_x, destination_tile_y)
-    TileMoving(f64, f64, f64, int, int),
+    /// (t, x, y)
+    TileMoving(f64, f64, f64),
 }
 
 pub struct Tile {
-    score: int,
-    tile_x: int,
-    tile_y: int,
-    status: TileState,
+    pub score: int,
+    pub tile_x: int,
+    pub tile_y: int,
+    pub status: TileState,
 }
 
 impl Tile {
@@ -32,27 +33,22 @@ impl Tile {
         (x, y)
     }
 
-    pub fn start_moving(&mut self, t: f64, destination_tile_x: int, destination_tile_y: int) {
-        match self.status {
-            TileStatic => {
-                let (x, y) = Tile::tile_to_pos(self.tile_x, self.tile_y);
-                self.status = TileMoving(t, x, y, destination_tile_x, destination_tile_y);
-            },
-            _ => {},
-        }
+    pub fn start_moving(&mut self, destination_tile_x: int, destination_tile_y: int) {
+        let (x, y) = Tile::tile_to_pos(self.tile_x, self.tile_y);
+        self.status = TileMoving(settings::TILE_MOVE_TIME, x, y);
+        self.tile_x = destination_tile_x;
+        self.tile_y = destination_tile_y;
     }
 
     pub fn update(&mut self, dt: f64) {
         match self.status {
-            TileMoving(t, x, y, dtx, dty) => {
+            TileMoving(t, x, y) => {
                 if dt >= t {
-                    self.tile_x = dtx;
-                    self.tile_y = dty;
                     self.status = TileStatic;
                 } else {
-                    let (dx, dy) = Tile::tile_to_pos(dtx, dty);
+                    let (dx, dy) = Tile::tile_to_pos(self.tile_x, self.tile_y);
                     let factor = dt / t;
-                    self.status = TileMoving(t - dt, x + factor * (dx - x), y + factor * (dy - y), dtx, dty);
+                    self.status = TileMoving(t - dt, x + factor * (dx - x), y + factor * (dy - y));
                 }
             },
             TileStatic => {},
@@ -62,12 +58,12 @@ impl Tile {
     pub fn render(&self, c: &Context, gl: &mut Gl) {
         let mut pos = (0.0, 0.0);
         match self.status {
+            TileMoving(_, x, y) => {
+                pos = (x, y);
+            },
             TileStatic => {
                 pos = Tile::tile_to_pos(self.tile_x, self.tile_y);
             },
-            TileMoving(_, x, y, _, _) => {
-                pos = (x, y);
-            }
         }
         let (x, y) = pos;
         let color = self.get_color();

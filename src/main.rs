@@ -1,6 +1,7 @@
 
 #![feature(globs)]
 
+extern crate collections;
 extern crate rand;
 
 extern crate graphics;

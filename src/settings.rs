@@ -14,8 +14,8 @@ pub static BOARD_SIZE: [f64, ..2] = [
 ];
 pub static BOARD_OFFSET_Y: f64 = 128.0;
 
-pub static TILE_WIDTH: uint = 4;
-pub static TILE_HEIGHT: uint = 4;
+pub static TILE_WIDTH: int = 4;
+pub static TILE_HEIGHT: int = 4;
 pub static TILE_SIZE: f64 = 96.0;
 pub static TILE_PADDING: f64 = 16.0;
 pub static TILE_BACKGROUND_COLOR: [f32, ..4] = [187.0 / 255.0, 173.0 / 255.0, 160.0 / 255.0, 1.0];
