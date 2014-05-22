@@ -46,6 +46,9 @@ pub static TILE_MOVE_TIME: f64 = 0.1;
 pub static TILE_NEW_TIME: f64 = 0.1;
 pub static TILE_COMBINE_TIME: f64 = 0.1;
 
+pub static BEST_RECT: [f64, ..4] = [284.0, BOARD_PADDING, 96.0, 48.0];
+pub static SCORE_RECT: [f64, ..4] = [284.0 - 96.0 - BOARD_PADDING, BOARD_PADDING, 96.0, 48.0];
+
 pub static LABEL_COLOR: [f32, ..4] = [187.0 / 255.0, 173.0 / 255.0, 160.0 / 255.0, 1.0];
 pub static BUTTON_COLOR: [f32, ..4] = [142.0 / 255.0, 122.0 / 255.0, 102.0 / 255.0, 1.0];
 

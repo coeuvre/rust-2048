@@ -89,6 +89,18 @@ impl Board {
     }
 
     pub fn render(&self, number_renderer: &NumberRenderer, c: &Context, gl: &mut Gl) {
+        c.view()
+         .rect(settings::BEST_RECT[0],
+               settings::BEST_RECT[1],
+               settings::BEST_RECT[2],
+               settings::BEST_RECT[3])
+         .rgba(settings::LABEL_COLOR[0],
+               settings::LABEL_COLOR[1],
+               settings::LABEL_COLOR[2],
+               settings::LABEL_COLOR[3])
+         .fill(gl);
+        number_renderer.render(self.score as u32, settings::BEST_RECT[0] + settings::BEST_RECT[2] / 2.0, settings::BEST_RECT[1] + settings::BEST_RECT[3] / 2.0, settings::BEST_RECT[2], settings::TEXT_LIGHT_COLOR, c, gl);
+
         self.render_board(c, gl);
         self.render_tiles(number_renderer, c, gl);
     }
