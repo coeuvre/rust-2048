@@ -4,6 +4,7 @@ use collections::hashmap::HashSet;
 use rand::random;
 use graphics::*;
 use piston::*;
+use number_renderer::NumberRenderer;
 use settings;
 use tile::{
     Tile,
@@ -87,9 +88,9 @@ impl Board {
         }
     }
 
-    pub fn render(&self, c: &Context, gl: &mut Gl) {
+    pub fn render(&self, number_renderer: &NumberRenderer, c: &Context, gl: &mut Gl) {
         self.render_board(c, gl);
-        self.render_tiles(c, gl);
+        self.render_tiles(number_renderer, c, gl);
     }
 
     pub fn merge_from_bottom_to_top(&mut self) {
@@ -365,9 +366,9 @@ impl Board {
         }
     }
 
-    fn render_tiles(&self, c: &Context, gl: &mut Gl) {
+    fn render_tiles(&self, number_renderer: &NumberRenderer, c: &Context, gl: &mut Gl) {
         for tile in self.tiles.iter() {
-            tile.render(c, gl);
+            tile.render(number_renderer, c, gl);
         }
     }
 

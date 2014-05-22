@@ -3,29 +3,33 @@ use graphics::*;
 use piston::*;
 
 use board::Board;
+use number_renderer::NumberRenderer;
 
 pub struct App {
     board: Board,
+    number_renderer: Option<NumberRenderer>,
 }
 
 impl App {
     pub fn new() -> App {
         App {
             board: Board::new(),
+            number_renderer: None,
         }
     }
 }
 
 impl Game for App {
+    fn load(&mut self, asset_store: &mut AssetStore) {
+        self.number_renderer = Some(NumberRenderer::new(asset_store));
+    }
+
     fn render(&self, c: &Context, gl: &mut Gl) {
-        self.board.render(c, gl);
+        self.board.render(self.number_renderer.get_ref(), c, gl);
     }
 
     fn update(&mut self, dt: f64, _asset_store: &mut AssetStore) {
         self.board.update(dt);
-    }
-
-    fn load(&mut self, _asset_store: &mut AssetStore) {
     }
 
     fn key_press(

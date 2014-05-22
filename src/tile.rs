@@ -1,6 +1,7 @@
 
 use graphics::*;
 use piston::*;
+use number_renderer::NumberRenderer;
 use settings;
 
 #[deriving(Clone, Eq)]
@@ -96,7 +97,7 @@ impl Tile {
         }
     }
 
-    pub fn render(&self, c: &Context, gl: &mut Gl) {
+    pub fn render(&self, number_renderer: &NumberRenderer, c: &Context, gl: &mut Gl) {
         let mut pos = Tile::tile_to_pos(self.tile_x, self.tile_y);
         let mut size = (settings::TILE_SIZE, settings::TILE_SIZE);
         match self.status {
@@ -119,6 +120,13 @@ impl Tile {
                         y + settings::TILE_SIZE / 2.0,
                         w / 2.0, h / 2.0)
          .rgba(color[0], color[1], color[2], color[3]).fill(gl);
+
+        let color = if self.score >= 8 {
+            settings::TEXT_LIGHT_COLOR
+        } else {
+            settings::TEXT_DARK_COLOR
+        };
+        number_renderer.render(self.score as u32, x + settings::TILE_SIZE / 2.0, y + settings::TILE_SIZE / 2.0, settings::TILE_SIZE, color, c, gl);
     }
 
     fn get_color(&self) -> [f32, ..4] {

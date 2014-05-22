@@ -49,3 +49,6 @@ pub static TILE_COMBINE_TIME: f64 = 0.1;
 pub static LABEL_COLOR: [f32, ..4] = [187.0 / 255.0, 173.0 / 255.0, 160.0 / 255.0, 1.0];
 pub static BUTTON_COLOR: [f32, ..4] = [142.0 / 255.0, 122.0 / 255.0, 102.0 / 255.0, 1.0];
 
+pub static TEXT_DARK_COLOR: [f32, ..4] = [119.0 / 255.0, 110.0 / 255.0, 101.0 / 255.0, 1.0];
+pub static TEXT_LIGHT_COLOR: [f32, ..4] = [249.0 / 255.0, 246.0 / 255.0, 242.0 / 255.0, 1.0];
+
