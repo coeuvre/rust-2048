@@ -3,6 +3,7 @@
 
 extern crate collections;
 extern crate rand;
+extern crate serialize;
 
 extern crate graphics;
 extern crate piston;
@@ -18,6 +19,8 @@ mod tile;
 type GameWindowBackEnd = GameWindowSDL2;
 
 fn main() {
+    let settings = settings::SettingsInJson::load();
+
     let mut game_window: GameWindowBackEnd = GameWindow::new(
         GameWindowSettings::new (
             "Rust-2048".to_owned(),

@@ -15,7 +15,7 @@ pub struct NumberRenderer {
 impl NumberRenderer {
     pub fn new(asset_store: &mut AssetStore) -> NumberRenderer {
         NumberRenderer {
-            image: asset_store.load_image("digits.png"),
+            image: asset_store.load_image("digits.png").unwrap(),
         }
     }
 
