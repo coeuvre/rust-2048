@@ -11,7 +11,7 @@ use serialize::{
 static SETTING_FILENAME: &'static str = "settings.json";
 
 pub struct Settings {
-    pub asset_folder: StrBuf,
+    pub asset_folder: String,
     pub window_size: [u32, ..2],
     pub window_background_color: [f32, ..3],
     pub board_padding: f64,
@@ -125,7 +125,7 @@ impl Settings {
 
 #[deriving(Encodable, Decodable)]
 struct SettingsInJson {
-    asset_folder: StrBuf,
+    asset_folder: String,
 
     // r g b (0 - 255)
     window_background_color: Vec<f32>,
@@ -220,12 +220,12 @@ impl SettingsInJson {
     }
 
     pub fn save(&self) {
-        let exe_path = self_exe_path().unwrap();
+        let exe_path = self_exe_path();
         if exe_path.is_none() {
             println!("WARNING: Failed to save settings: can't find exe path.");
             return;
         }
-        let path = exe_path.join(Path::new(SETTING_FILENAME));
+        let path = exe_path.unwrap().join(Path::new(SETTING_FILENAME));
         let file = File::create(&path).unwrap();
         let mut writer = BufferedWriter::new(file);
         let mut encoder = json::Encoder::new(&mut writer);

@@ -27,7 +27,7 @@ impl<'a> Game for App<'a> {
         self.number_renderer = Some(NumberRenderer::new(asset_store));
     }
 
-    fn render(&self, c: &Context, gl: &mut Gl) {
+    fn render(&self, _ext_dt: f64, c: &Context, gl: &mut Gl) {
         self.board.render(self.number_renderer.get_ref(), c, gl);
     }
 
