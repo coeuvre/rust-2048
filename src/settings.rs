@@ -8,6 +8,7 @@ use serialize::{
     Decodable,
 };
 
+/*
 pub static ASSET_FOLDER: &'static str = "assets";
 
 pub static WINDOW_SIZE: [u32, ..2] = [
@@ -63,7 +64,7 @@ pub static BUTTON_COLOR: [f32, ..4] = [142.0 / 255.0, 122.0 / 255.0, 102.0 / 255
 
 pub static TEXT_DARK_COLOR: [f32, ..4] = [119.0 / 255.0, 110.0 / 255.0, 101.0 / 255.0, 1.0];
 pub static TEXT_LIGHT_COLOR: [f32, ..4] = [249.0 / 255.0, 246.0 / 255.0, 242.0 / 255.0, 1.0];
-
+*/
 
 static SETTING_FILENAME: &'static str = "settings.json";
 
@@ -93,10 +94,6 @@ pub struct Settings {
 }
 
 impl Settings {
-    pub fn default_settings() -> Settings {
-        Settings::from_settings_in_json(&SettingsInJson::default_settings())
-    }
-
     pub fn load() -> Settings {
         Settings::from_settings_in_json(&SettingsInJson::load())
     }
@@ -107,16 +104,25 @@ impl Settings {
             s.tile_size * s.tile_height as f64 + s.tile_padding * (s.tile_height + 1) as f64,
 
         ];
+
+        let mut tiles_colors = Vec::<[f32, ..3]>::new();
+        for color in s.tiles_colors.iter() {
+            tiles_colors.push([
+                *color.get(0) / 255.0,
+                *color.get(1) / 255.0,
+                *color.get(2) / 255.0,
+            ]);
+        }
         Settings {
-            asset_folder: s.asset_folder,
+            asset_folder: s.asset_folder.clone(),
             window_size: [
                 (s.board_padding * 2.0 + board_size[0]) as u32,
                 (s.board_padding * 2.0 + board_size[1] + s.board_offset_y) as u32,
             ],
             window_background_color: [
-                *s.window_background_color.get(0),
-                *s.window_background_color.get(1),
-                *s.window_background_color.get(2),
+                *s.window_background_color.get(0) / 255.0,
+                *s.window_background_color.get(1) / 255.0,
+                *s.window_background_color.get(2) / 255.0,
             ],
             board_padding: s.board_padding,
             board_size: board_size,
@@ -126,9 +132,50 @@ impl Settings {
             tile_size: s.tile_size,
             tile_padding: s.tile_padding,
             tile_background_color: [
-                *s.tile_background_color.get(0),
-                *s.tile_background_color.get(1),
-                *s.tile_background_color.get(2),
+                *s.tile_background_color.get(0) / 255.0,
+                *s.tile_background_color.get(1) / 255.0,
+                *s.tile_background_color.get(2) / 255.0,
+            ],
+            tiles_colors: tiles_colors,
+            tile_unknow_color: [
+                *s.tile_unknow_color.get(0) / 255.0,
+                *s.tile_unknow_color.get(1) / 255.0,
+                *s.tile_unknow_color.get(2) / 255.0,
+            ],
+            tile_move_time: s.tile_move_time,
+            tile_new_time: s.tile_new_time,
+            tile_combine_time: s.tile_combine_time,
+            best_rect: [
+                *s.best_rect.get(0),
+                *s.best_rect.get(1),
+                *s.best_rect.get(2),
+                *s.best_rect.get(3),
+            ],
+            score_rect: [
+                *s.score_rect.get(0),
+                *s.score_rect.get(1),
+                *s.score_rect.get(2),
+                *s.score_rect.get(3),
+            ],
+            label_color: [
+                *s.label_color.get(0) / 255.0,
+                *s.label_color.get(1) / 255.0,
+                *s.label_color.get(2) / 255.0,
+            ],
+            button_color: [
+                *s.button_color.get(0) / 255.0,
+                *s.button_color.get(1) / 255.0,
+                *s.button_color.get(2) / 255.0,
+            ],
+            text_dark_color: [
+                *s.text_dark_color.get(0) / 255.0,
+                *s.text_dark_color.get(1) / 255.0,
+                *s.text_dark_color.get(2) / 255.0,
+            ],
+            text_light_color: [
+                *s.text_light_color.get(0) / 255.0,
+                *s.text_light_color.get(1) / 255.0,
+                *s.text_light_color.get(2) / 255.0,
             ],
         }
     }
@@ -196,7 +243,7 @@ impl SettingsInJson {
             tile_width: 4,
             tile_height: 4,
             tile_size: 72.0,
-            tile_padding: 12.0,
+            tile_padding: 16.0,
             tile_background_color: vec![187.0, 173.0, 160.0],
             tiles_colors: tiles_colors,
             tile_unknow_color: vec![200.0, 0.0, 0.0],
@@ -220,7 +267,9 @@ impl SettingsInJson {
         let exe_path = exe_path.unwrap();
         let path = exe_path.join(Path::new(SETTING_FILENAME));
         if !path.exists() || !path.is_file() {
-            return SettingsInJson::default_settings();
+            let default = SettingsInJson::default_settings();
+            default.save();
+            return default;
         }
         let file = File::open(&path).unwrap();
         let mut reader = BufferedReader::new(file);

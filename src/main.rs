@@ -19,21 +19,24 @@ mod tile;
 type GameWindowBackEnd = GameWindowSDL2;
 
 fn main() {
-    let settings = settings::SettingsInJson::load();
+    let settings = settings::Settings::load();
 
     let mut game_window: GameWindowBackEnd = GameWindow::new(
         GameWindowSettings::new (
             "Rust-2048".to_owned(),
-            settings::WINDOW_SIZE,
+            settings.window_size,
             false,
             true,
-            settings::WINDOW_BACKGROUND_COLOR,
+            [settings.window_background_color[0],
+             settings.window_background_color[1],
+             settings.window_background_color[2],
+             1.0,],
         )
     );
 
-    let mut asset_store = AssetStore::from_folder(settings::ASSET_FOLDER);
+    let mut asset_store = AssetStore::from_folder(settings.asset_folder.as_slice());
 
-    let mut app = app::App::new();
+    let mut app = app::App::new(&settings);
 
     app.run(&mut game_window, &mut asset_store);
 }

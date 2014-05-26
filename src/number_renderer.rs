@@ -20,7 +20,7 @@ impl NumberRenderer {
     }
 
     pub fn render(&self, number: u32, center_x: f64, center_y: f64, max_width: f64,
-                  color: [f32, ..4], c: &Context, gl: &mut Gl) {
+                  color: [f32, ..3], c: &Context, gl: &mut Gl) {
         let digits = number_to_digits(number);
         let total_width = DIGITS_WIDTH * digits.len() as f64;
         let total_width = if total_width > max_width {
@@ -38,7 +38,7 @@ impl NumberRenderer {
         for digit in digits.iter() {
             image.source_rect[0] = DIGITS_WIDTH as u32 * *digit;
             c.view().rect(x, y, width, height)
-             .image(image).rgba(color[0], color[1], color[2], color[3])
+             .image(image).rgba(color[0], color[1], color[2], 1.0)
              .draw(gl);
             x += width;
         }

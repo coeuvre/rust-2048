@@ -5,24 +5,27 @@ use rand::random;
 use graphics::*;
 use piston::*;
 use number_renderer::NumberRenderer;
-use settings;
+use settings::Settings;
 use tile::{
     Tile,
     TileStatic,
 };
 
-pub struct Board {
-    tiles: Vec<Tile>,
+pub struct Board<'a> {
+    tiles: Vec<Tile<'a>>,
     score: int,
     highest_score: int,
+
+    settings: &'a Settings,
 }
 
-impl Board {
-    pub fn new() -> Board {
+impl<'a> Board<'a> {
+    pub fn new(settings: &'a Settings) -> Board<'a> {
         let mut board = Board {
             tiles: Vec::<Tile>::new(),
             score: 0,
             highest_score: 0,
+            settings: settings,
         };
         board.generate_tile();
         board.generate_tile();
@@ -30,15 +33,15 @@ impl Board {
     }
 
     pub fn generate_tile(&mut self) {
-        if self.tiles.len() == (settings::TILE_WIDTH * settings::TILE_HEIGHT) as uint {
+        if self.tiles.len() == (self.settings.tile_width * self.settings.tile_height) as uint {
             return;
         }
 
         loop {
-            let x = (random::<uint>() % settings::TILE_WIDTH as uint) as int;
-            let y = (random::<uint>() % settings::TILE_HEIGHT as uint) as int;
+            let x = (random::<uint>() % self.settings.tile_width as uint) as int;
+            let y = (random::<uint>() % self.settings.tile_height as uint) as int;
             if self.get_tile(x, y).is_none() {
-                self.tiles.push(Tile::new(2, x, y));
+                self.tiles.push(Tile::new(self.settings, 2, x, y));
                 break;
             }
         }
@@ -70,7 +73,7 @@ impl Board {
 
                 tiles_need_removed.insert(i);
                 tiles_need_removed.insert(j);
-                tiles_need_added.push(Tile::new_combined(tile1.score + tile2.score, tile1.tile_x, tile1.tile_y));
+                tiles_need_added.push(Tile::new_combined(self.settings, tile1.score + tile2.score, tile1.tile_x, tile1.tile_y));
                 score_to_added += tile1.score + tile2.score;
                 break;
             }
@@ -90,27 +93,32 @@ impl Board {
 
     pub fn render(&self, number_renderer: &NumberRenderer, c: &Context, gl: &mut Gl) {
         c.view()
-         .rect(settings::BEST_RECT[0],
-               settings::BEST_RECT[1],
-               settings::BEST_RECT[2],
-               settings::BEST_RECT[3])
-         .rgba(settings::LABEL_COLOR[0],
-               settings::LABEL_COLOR[1],
-               settings::LABEL_COLOR[2],
-               settings::LABEL_COLOR[3])
+         .rect(self.settings.best_rect[0],
+               self.settings.best_rect[1],
+               self.settings.best_rect[2],
+               self.settings.best_rect[3])
+         .rgba(self.settings.label_color[0],
+               self.settings.label_color[1],
+               self.settings.label_color[2],
+               1.0)
          .fill(gl);
-        number_renderer.render(self.score as u32, settings::BEST_RECT[0] + settings::BEST_RECT[2] / 2.0, settings::BEST_RECT[1] + settings::BEST_RECT[3] / 2.0, settings::BEST_RECT[2], settings::TEXT_LIGHT_COLOR, c, gl);
+        number_renderer.render(
+            self.score as u32,
+            self.settings.best_rect[0] + self.settings.best_rect[2] / 2.0,
+            self.settings.best_rect[1] + self.settings.best_rect[3] / 2.0,
+            self.settings.best_rect[2],
+            self.settings.text_light_color, c, gl);
 
         self.render_board(c, gl);
         self.render_tiles(number_renderer, c, gl);
     }
 
     pub fn merge_from_bottom_to_top(&mut self) {
-        self.merge_col(0, settings::TILE_HEIGHT, 1);
+        self.merge_col(0, self.settings.tile_height, 1);
     }
 
     pub fn merge_from_top_to_bottom(&mut self) {
-        self.merge_col(settings::TILE_HEIGHT - 1, -1, -1);
+        self.merge_col(self.settings.tile_height - 1, -1, -1);
     }
 
     fn merge_col(&mut self, y_start: int, y_end: int, y_step: int) {
@@ -121,7 +129,7 @@ impl Board {
         let mut need_generate = false;
         loop {
             // move all tiles to right place
-            for col in range(0, settings::TILE_WIDTH) {
+            for col in range(0, self.settings.tile_width) {
                 for row in range_step(y_start, y_end, y_step) {
                     match self.get_mut_tile(col, row) {
                         None => {
@@ -141,7 +149,7 @@ impl Board {
             }
 
             let mut did_merged = false;
-            for col in range(0, settings::TILE_WIDTH) {
+            for col in range(0, self.settings.tile_width) {
                 let mut found = false;
                 let mut sx = 0;
                 let mut sy = 0;
@@ -189,11 +197,11 @@ impl Board {
     }
 
     pub fn merge_from_left_to_right(&mut self) {
-        self.merge_row(settings::TILE_WIDTH - 1, -1, -1);
+        self.merge_row(self.settings.tile_width - 1, -1, -1);
     }
 
     pub fn merge_from_right_to_left(&mut self) {
-        self.merge_row(0, settings::TILE_WIDTH, 1);
+        self.merge_row(0, self.settings.tile_width, 1);
     }
 
     fn merge_row(&mut self, x_start: int, x_end: int, x_step: int) {
@@ -204,7 +212,7 @@ impl Board {
         let mut need_generate = false;
         loop {
             // move all tiles to right place
-            for row in range(0, settings::TILE_HEIGHT) {
+            for row in range(0, self.settings.tile_height) {
                 for col in range_step(x_start, x_end, x_step) {
                     match self.get_mut_tile(col, row) {
                         None => {
@@ -224,7 +232,7 @@ impl Board {
 
             // merge
             let mut did_merged = false;
-            for row in range(0, settings::TILE_HEIGHT) {
+            for row in range(0, self.settings.tile_height) {
                 let mut found = false;
                 let mut sx = 0;
                 let mut sy = 0;
@@ -282,11 +290,11 @@ impl Board {
     }
 
     /// Returns next tile right besides (x, y)
-    fn get_next_tile<'a>(&'a self, x: int, y: int, step_x: int, step_y: int) -> Option<&'a Tile> {
+    fn get_next_tile<'b>(&'b self, x: int, y: int, step_x: int, step_y: int) -> Option<&'b Tile<'a>> {
         let mut x = x + step_x;
         let mut y = y + step_y;
-        while x >= 0 && x < settings::TILE_WIDTH
-              && y >= 0 && y < settings::TILE_HEIGHT {
+        while x >= 0 && x < self.settings.tile_width
+              && y >= 0 && y < self.settings.tile_height {
             let tile = self.get_tile(x, y);
             if tile.is_some() {
                 return tile;
@@ -297,12 +305,12 @@ impl Board {
         None
     }
 
-    fn get_mut_next_tile<'a>(&'a mut self, x: int, y: int, step_x: int, step_y: int) -> Option<&'a mut Tile> {
+    fn get_mut_next_tile<'b>(&'b mut self, x: int, y: int, step_x: int, step_y: int) -> Option<&'b mut Tile<'a>> {
         let mut x = x + step_x;
         let mut y = y + step_y;
         let mut found = false;
-        while x >= 0 && x < settings::TILE_WIDTH
-              && y >= 0 && y < settings::TILE_HEIGHT {
+        while x >= 0 && x < self.settings.tile_width
+              && y >= 0 && y < self.settings.tile_height {
             let tile = self.get_tile(x, y);
             if tile.is_some() {
                 found = true;
@@ -319,7 +327,7 @@ impl Board {
         }
     }
 
-    fn get_tile<'a>(&'a self, x: int, y: int) -> Option<&'a Tile> {
+    fn get_tile<'b>(&'b self, x: int, y: int) -> Option<&'b Tile<'a>> {
         for tile in self.tiles.iter() {
             if tile.tile_x == x && tile.tile_y == y {
                 return Some(tile);
@@ -328,7 +336,7 @@ impl Board {
         None
     }
 
-    fn get_mut_tile<'a>(&'a mut self, x: int, y: int) -> Option<&'a mut Tile> {
+    fn get_mut_tile<'b>(&'b mut self, x: int, y: int) -> Option<&'b mut Tile<'a>> {
         for tile in self.tiles.mut_iter() {
             if tile.tile_x == x && tile.tile_y == y {
                 return Some(tile);
@@ -349,32 +357,32 @@ impl Board {
 
     fn render_board(&self, c: &Context, gl: &mut Gl) {
         c.view()
-         .rect(settings::BOARD_PADDING,
-               settings::BOARD_PADDING + settings::BOARD_OFFSET_Y,
-               settings::BOARD_SIZE[0],
-               settings::BOARD_SIZE[1])
-         .rgba(settings::TILE_BACKGROUND_COLOR[0],
-               settings::TILE_BACKGROUND_COLOR[1],
-               settings::TILE_BACKGROUND_COLOR[2],
-               settings::TILE_BACKGROUND_COLOR[3])
+         .rect(self.settings.board_padding,
+               self.settings.board_padding + self.settings.board_offset_y,
+               self.settings.board_size[0],
+               self.settings.board_size[1])
+         .rgba(self.settings.tile_background_color[0],
+               self.settings.tile_background_color[1],
+               self.settings.tile_background_color[2],
+               1.0)
          .fill(gl);
 
-        let mut x = settings::BOARD_PADDING + settings::TILE_PADDING;
-        let mut y = settings::BOARD_PADDING + settings::BOARD_OFFSET_Y + settings::TILE_PADDING;
-        for _ in range(0, settings::TILE_HEIGHT) {
-            for _ in range(0, settings::TILE_WIDTH) {
+        let mut x = self.settings.board_padding + self.settings.tile_padding;
+        let mut y = self.settings.board_padding + self.settings.board_offset_y + self.settings.tile_padding;
+        for _ in range(0, self.settings.tile_height) {
+            for _ in range(0, self.settings.tile_width) {
                 c.view()
-                 .rect(x, y, settings::TILE_SIZE, settings::TILE_SIZE)
-                 .rgba(settings::TILES_COLOR[0][0],
-                       settings::TILES_COLOR[0][1],
-                       settings::TILES_COLOR[0][2],
-                       settings::TILES_COLOR[0][3])
+                 .rect(x, y, self.settings.tile_size, self.settings.tile_size)
+                 .rgba(self.settings.tiles_colors.get(0)[0],
+                       self.settings.tiles_colors.get(0)[1],
+                       self.settings.tiles_colors.get(0)[2],
+                       1.0)
                  .fill(gl);
 
-                x += settings::TILE_PADDING + settings::TILE_SIZE;
+                x += self.settings.tile_padding + self.settings.tile_size;
             }
-            x = settings::BOARD_PADDING + settings::TILE_PADDING;
-            y += settings::TILE_PADDING + settings::TILE_SIZE;
+            x = self.settings.board_padding + self.settings.tile_padding;
+            y += self.settings.tile_padding + self.settings.tile_size;
         }
     }
 
