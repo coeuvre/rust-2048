@@ -10,6 +10,10 @@ pub struct App<'a> {
     board: Board<'a>,
     number_renderer: Option<NumberRenderer>,
     settings: &'a Settings,
+
+    logo: Option<Image>,
+    comment1: Option<Image>,
+    comment2: Option<Image>,
 }
 
 impl<'a> App<'a> {
@@ -18,16 +22,62 @@ impl<'a> App<'a> {
             board: Board::new(settings),
             number_renderer: None,
             settings: settings,
+
+            logo: None,
+            comment1: None,
+            comment2: None,
         }
+    }
+}
+
+impl<'a> App<'a> {
+    fn render_ui(&self, c: &Context, gl: &mut Gl) {
+        // logo
+        c.trans(self.settings.board_padding, self.settings.board_padding)
+         .image(self.logo.unwrap())
+         .rgb(self.settings.text_dark_color[0],
+              self.settings.text_dark_color[1],
+              self.settings.text_dark_color[2])
+         .draw(gl);
+
+        c.view()
+         .rect(self.settings.best_rect[0],
+               self.settings.best_rect[1],
+               self.settings.best_rect[2],
+               self.settings.best_rect[3])
+         .rgba(self.settings.label_color[0],
+               self.settings.label_color[1],
+               self.settings.label_color[2],
+               1.0)
+         .fill(gl);
+
+        self.render_comment(self.comment1.get_ref(), self.settings.comment1_offset_y, c, gl);
+        self.render_comment(self.comment2.get_ref(), self.settings.comment2_offset_y, c, gl);
+    }
+
+    fn render_comment(&self, comment: &Image, y: f64, c: &Context, gl: &mut Gl) {
+        let w = self.settings.window_size[0] as f64 - 2.0 * self.settings.board_padding;
+        let h = comment.texture_height as f64 * w / comment.texture_width as f64;
+        c.rect(self.settings.board_padding, y, w, h)
+         .image(*comment)
+         .rgb(self.settings.text_dark_color[0],
+              self.settings.text_dark_color[1],
+              self.settings.text_dark_color[2])
+         .draw(gl);
     }
 }
 
 impl<'a> Game for App<'a> {
     fn load(&mut self, asset_store: &mut AssetStore) {
         self.number_renderer = Some(NumberRenderer::new(asset_store));
+
+        self.logo = Some(asset_store.load_image("logo.png").unwrap());
+        self.comment1 = Some(asset_store.load_image("comment1.png").unwrap());
+        self.comment2 = Some(asset_store.load_image("comment2.png").unwrap());
     }
 
     fn render(&self, _ext_dt: f64, c: &Context, gl: &mut Gl) {
+        self.render_ui(c, gl);
         self.board.render(self.number_renderer.get_ref(), c, gl);
     }
 

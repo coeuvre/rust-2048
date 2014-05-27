@@ -14,6 +14,8 @@ pub struct Settings {
     pub asset_folder: String,
     pub window_size: [u32, ..2],
     pub window_background_color: [f32, ..3],
+    pub comment1_offset_y: f64,
+    pub comment2_offset_y: f64,
     pub board_padding: f64,
     pub board_size: [f64, ..2],
     pub board_offset_y: f64,
@@ -57,6 +59,8 @@ impl Settings {
         }
         Settings {
             asset_folder: s.asset_folder.clone(),
+            comment1_offset_y: s.comment1_offset_y,
+            comment2_offset_y: s.comment2_offset_y,
             window_size: [
                 (s.board_padding * 2.0 + board_size[0]) as u32,
                 (s.board_padding * 2.0 + board_size[1] + s.board_offset_y) as u32,
@@ -130,6 +134,9 @@ struct SettingsInJson {
     // r g b (0 - 255)
     window_background_color: Vec<f32>,
 
+    comment1_offset_y: f64,
+    comment2_offset_y: f64,
+
     board_padding: f64,
     board_offset_y: f64,
 
@@ -180,6 +187,8 @@ impl SettingsInJson {
         SettingsInJson {
             asset_folder: "assets".to_strbuf(),
             window_background_color: vec![255.0, 248.0, 239.0],
+            comment1_offset_y: 72.0,
+            comment2_offset_y: 100.0,
             board_padding: 12.0,
             board_offset_y: 128.0,
             tile_width: 4,

@@ -92,16 +92,6 @@ impl<'a> Board<'a> {
     }
 
     pub fn render(&self, number_renderer: &NumberRenderer, c: &Context, gl: &mut Gl) {
-        c.view()
-         .rect(self.settings.best_rect[0],
-               self.settings.best_rect[1],
-               self.settings.best_rect[2],
-               self.settings.best_rect[3])
-         .rgba(self.settings.label_color[0],
-               self.settings.label_color[1],
-               self.settings.label_color[2],
-               1.0)
-         .fill(gl);
         number_renderer.render(
             self.score as u32,
             self.settings.best_rect[0] + self.settings.best_rect[2] / 2.0,
