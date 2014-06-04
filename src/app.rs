@@ -11,9 +11,9 @@ pub struct App<'a> {
     number_renderer: Option<NumberRenderer>,
     settings: &'a Settings,
 
-    logo: Option<Image>,
-    comment1: Option<Image>,
-    comment2: Option<Image>,
+    logo: Option<Texture>,
+    comment1: Option<Texture>,
+    comment2: Option<Texture>,
 }
 
 impl<'a> App<'a> {
@@ -34,7 +34,7 @@ impl<'a> App<'a> {
     fn render_ui(&self, c: &Context, gl: &mut Gl) {
         // logo
         c.trans(self.settings.board_padding, self.settings.board_padding)
-         .image(self.logo.unwrap())
+         .image(self.logo.get_ref())
          .rgb(self.settings.text_dark_color[0],
               self.settings.text_dark_color[1],
               self.settings.text_dark_color[2])
@@ -55,11 +55,12 @@ impl<'a> App<'a> {
         self.render_comment(self.comment2.get_ref(), self.settings.comment2_offset_y, c, gl);
     }
 
-    fn render_comment(&self, comment: &Image, y: f64, c: &Context, gl: &mut Gl) {
+    fn render_comment(&self, comment: &Texture, y: f64, c: &Context, gl: &mut Gl) {
+        let (width, height) = comment.get_size();
         let w = self.settings.window_size[0] as f64 - 2.0 * self.settings.board_padding;
-        let h = comment.texture_height as f64 * w / comment.texture_width as f64;
+        let h = height as f64 * w / width as f64;
         c.rect(self.settings.board_padding, y, w, h)
-         .image(*comment)
+         .image(comment)
          .rgb(self.settings.text_dark_color[0],
               self.settings.text_dark_color[1],
               self.settings.text_dark_color[2])
@@ -71,9 +72,9 @@ impl<'a> Game for App<'a> {
     fn load(&mut self, asset_store: &mut AssetStore) {
         self.number_renderer = Some(NumberRenderer::new(asset_store));
 
-        self.logo = Some(asset_store.load_image("logo.png").unwrap());
-        self.comment1 = Some(asset_store.load_image("comment1.png").unwrap());
-        self.comment2 = Some(asset_store.load_image("comment2.png").unwrap());
+        self.logo = Some(Texture::from_path(&asset_store.path("logo.png").unwrap()).unwrap());
+        self.comment1 = Some(Texture::from_path(&asset_store.path("comment1.png").unwrap()).unwrap());
+        self.comment2 = Some(Texture::from_path(&asset_store.path("comment2.png").unwrap()).unwrap());
     }
 
     fn render(&self, _ext_dt: f64, c: &Context, gl: &mut Gl) {

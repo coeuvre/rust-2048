@@ -1,7 +1,7 @@
 
 use std::iter::range_step;
 use collections::hashmap::HashSet;
-use rand::random;
+use std::rand::random;
 use graphics::*;
 use piston::*;
 use number_renderer::NumberRenderer;
@@ -14,7 +14,6 @@ use tile::{
 pub struct Board<'a> {
     tiles: Vec<Tile<'a>>,
     score: int,
-    highest_score: int,
 
     settings: &'a Settings,
 }
@@ -24,7 +23,6 @@ impl<'a> Board<'a> {
         let mut board = Board {
             tiles: Vec::<Tile>::new(),
             score: 0,
-            highest_score: 0,
             settings: settings,
         };
         board.generate_tile();
@@ -384,10 +382,7 @@ impl<'a> Board<'a> {
 
     fn add_score(&mut self, score: int) {
         self.score += score;
-        if self.score > self.highest_score {
-            self.highest_score = self.score;
-        }
-        println!("Score: {}, Highest Score: {}", self.score, self.highest_score);
+        println!("Score: {}", self.score);
     }
 }
 

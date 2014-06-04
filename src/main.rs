@@ -2,7 +2,6 @@
 #![feature(globs)]
 
 extern crate collections;
-extern crate rand;
 extern crate serialize;
 
 extern crate graphics;
@@ -22,16 +21,18 @@ fn main() {
     let settings = settings::Settings::load();
 
     let mut game_window: GameWindowBackEnd = GameWindow::new(
-        GameWindowSettings::new (
-            "Rust-2048".to_owned(),
-            settings.window_size,
-            false,
-            true,
-            [settings.window_background_color[0],
-             settings.window_background_color[1],
-             settings.window_background_color[2],
-             1.0,],
-        )
+        GameWindowSettings {
+            title: "Rust-2048".to_string(),
+            size: settings.window_size,
+            fullscreen: false,
+            exit_on_esc: true,
+            background_color: [
+                settings.window_background_color[0],
+                settings.window_background_color[1],
+                settings.window_background_color[2],
+                1.0,
+            ],
+        }
     );
 
     let mut asset_store = AssetStore::from_folder(settings.asset_folder.as_slice());

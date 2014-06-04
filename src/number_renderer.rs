@@ -3,19 +3,20 @@ use graphics::*;
 use piston::{
     AssetStore,
     Gl,
+    Texture,
 };
 
 static DIGITS_WIDTH: f64 = 20.0;
 static DIGITS_HEIGHT: f64 = 26.0;
 
 pub struct NumberRenderer {
-    image: Image,
+    image: Texture,
 }
 
 impl NumberRenderer {
     pub fn new(asset_store: &mut AssetStore) -> NumberRenderer {
         NumberRenderer {
-            image: asset_store.load_image("digits.png").unwrap(),
+            image: Texture::from_path(&asset_store.path("digits.png").unwrap()).unwrap(),
         }
     }
 
@@ -33,12 +34,11 @@ impl NumberRenderer {
         let height = width / DIGITS_WIDTH * DIGITS_HEIGHT;
         let y = center_y - height / 2.0;
 
-        let mut image = self.image;
-        image.source_rect[2] = DIGITS_WIDTH as u32;
         for digit in digits.iter() {
-            image.source_rect[0] = DIGITS_WIDTH as u32 * *digit;
-            c.view().rect(x, y, width, height)
-             .image(image).rgba(color[0], color[1], color[2], 1.0)
+            c.rect(x, y, width, height)
+             .image(&self.image)
+             .src_rect(*digit * DIGITS_WIDTH as u32, 0, DIGITS_WIDTH as u32, DIGITS_HEIGHT as u32)
+             .rgba(color[0], color[1], color[2], 1.0)
              .draw(gl);
             x += width;
         }

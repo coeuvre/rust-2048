@@ -185,7 +185,7 @@ impl SettingsInJson {
         // 512 color
         tiles_colors.push(vec![237.0, 200.0, 80.0]);
         SettingsInJson {
-            asset_folder: "assets".to_strbuf(),
+            asset_folder: "assets".to_string(),
             window_background_color: vec![255.0, 248.0, 239.0],
             comment1_offset_y: 72.0,
             comment2_offset_y: 100.0,

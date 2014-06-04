@@ -4,7 +4,7 @@ use piston::*;
 use number_renderer::NumberRenderer;
 use settings::Settings;
 
-#[deriving(Clone, Eq)]
+#[deriving(Clone, PartialEq)]
 pub enum TileState {
     TileStatic,
     /// (t, x, y, origin_x, origin_x)
