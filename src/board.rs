@@ -1,6 +1,6 @@
 
 use std::iter::range_step;
-use collections::hashmap::HashSet;
+use std::collections::hashmap::HashSet;
 use std::rand::random;
 use graphics::*;
 use piston::*;

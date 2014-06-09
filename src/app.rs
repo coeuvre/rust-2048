@@ -77,41 +77,31 @@ impl<'a> Game for App<'a> {
         self.comment2 = Some(Texture::from_path(&asset_store.path("comment2.png").unwrap()).unwrap());
     }
 
-    fn render(&self, _ext_dt: f64, c: &Context, gl: &mut Gl) {
-        self.render_ui(c, gl);
-        self.board.render(self.number_renderer.get_ref(), c, gl);
+    fn render(&self, c: &Context, args: RenderArgs) {
+        self.render_ui(c, args.gl);
+        self.board.render(self.number_renderer.get_ref(), c, args.gl);
     }
 
-    fn update(&mut self, dt: f64, _asset_store: &mut AssetStore) {
-        self.board.update(dt);
+    fn update(&mut self, args: UpdateArgs) {
+        self.board.update(args.dt);
     }
 
-    fn key_press(
-        &mut self,
-        key: keyboard::Key,
-        _asset_store: &mut AssetStore
-    ) {
-        if key == keyboard::Left {
+    fn key_press(&mut self, args: KeyPressArgs) {
+        if args.key == keyboard::Left {
             self.board.merge_from_right_to_left();
         }
-        if key == keyboard::Right {
+        if args.key == keyboard::Right {
             self.board.merge_from_left_to_right();
         }
-        if key == keyboard::Up {
+        if args.key == keyboard::Up {
             self.board.merge_from_bottom_to_top();
         }
-        if key == keyboard::Down {
+        if args.key == keyboard::Down {
             self.board.merge_from_top_to_bottom();
         }
-        if key == keyboard::Space {
+        if args.key == keyboard::Space {
             self.board = Board::new(self.settings);
         }
     }
-
-    fn key_release(
-        &mut self,
-        _key: keyboard::Key,
-        _asset_store: &mut AssetStore
-    ) {}
 }
 

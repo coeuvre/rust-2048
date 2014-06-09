@@ -1,7 +1,6 @@
 
 #![feature(globs)]
 
-extern crate collections;
 extern crate serialize;
 
 extern crate graphics;
