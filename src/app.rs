@@ -77,16 +77,16 @@ impl<'a> Game for App<'a> {
         self.comment2 = Some(Texture::from_path(&asset_store.path("comment2.png").unwrap()).unwrap());
     }
 
-    fn render(&self, c: &Context, args: RenderArgs) {
+    fn render(&self, c: &Context, args: &mut RenderArgs) {
         self.render_ui(c, args.gl);
         self.board.render(self.number_renderer.get_ref(), c, args.gl);
     }
 
-    fn update(&mut self, args: UpdateArgs) {
+    fn update(&mut self, args: &mut UpdateArgs) {
         self.board.update(args.dt);
     }
 
-    fn key_press(&mut self, args: KeyPressArgs) {
+    fn key_press(&mut self, args: &KeyPressArgs) {
         if args.key == keyboard::Left {
             self.board.merge_from_right_to_left();
         }
