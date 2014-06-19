@@ -102,11 +102,13 @@ impl<'a> Board<'a> {
     }
 
     pub fn merge_from_bottom_to_top(&mut self) {
-        self.merge_col(0, self.settings.tile_height, 1);
+        let height = self.settings.tile_height;
+        self.merge_col(0, height, 1);
     }
 
     pub fn merge_from_top_to_bottom(&mut self) {
-        self.merge_col(self.settings.tile_height - 1, -1, -1);
+        let height = self.settings.tile_height;
+        self.merge_col(height - 1, -1, -1);
     }
 
     fn merge_col(&mut self, y_start: int, y_end: int, y_step: int) {
@@ -185,11 +187,13 @@ impl<'a> Board<'a> {
     }
 
     pub fn merge_from_left_to_right(&mut self) {
-        self.merge_row(self.settings.tile_width - 1, -1, -1);
+        let width = self.settings.tile_width;
+        self.merge_row(width - 1, -1, -1);
     }
 
     pub fn merge_from_right_to_left(&mut self) {
-        self.merge_row(0, self.settings.tile_width, 1);
+        let width = self.settings.tile_width;
+        self.merge_row(0, width, 1);
     }
 
     fn merge_row(&mut self, x_start: int, x_end: int, x_step: int) {
