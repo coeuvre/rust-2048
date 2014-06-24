@@ -89,7 +89,7 @@ impl<'a> Board<'a> {
         }
     }
 
-    pub fn render(&self, number_renderer: &NumberRenderer, c: &Context, gl: &mut Gl) {
+    pub fn render(&mut self, number_renderer: &NumberRenderer, c: &Context, gl: &mut Gl) {
         number_renderer.render(
             self.score as u32,
             self.settings.best_rect[0] + self.settings.best_rect[2] / 2.0,

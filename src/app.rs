@@ -14,6 +14,8 @@ pub struct App<'a> {
     logo: Option<Texture>,
     comment1: Option<Texture>,
     comment2: Option<Texture>,
+
+    gl: Gl,
 }
 
 impl<'a> App<'a> {
@@ -26,19 +28,21 @@ impl<'a> App<'a> {
             logo: None,
             comment1: None,
             comment2: None,
+
+            gl: Gl::new(),
         }
     }
 }
 
 impl<'a> App<'a> {
-    fn render_ui(&self, c: &Context, gl: &mut Gl) {
+    fn render_ui(&mut self, c: &Context) {
         // logo
         c.trans(self.settings.board_padding, self.settings.board_padding)
          .image(self.logo.get_ref())
          .rgb(self.settings.text_dark_color[0],
               self.settings.text_dark_color[1],
               self.settings.text_dark_color[2])
-         .draw(gl);
+         .draw(&mut self.gl);
 
         c.view()
          .rect(self.settings.best_rect[0],
@@ -49,13 +53,16 @@ impl<'a> App<'a> {
                self.settings.label_color[1],
                self.settings.label_color[2],
                1.0)
-         .fill(gl);
+         .fill(&mut self.gl);
 
-        self.render_comment(self.comment1.get_ref(), self.settings.comment1_offset_y, c, gl);
-        self.render_comment(self.comment2.get_ref(), self.settings.comment2_offset_y, c, gl);
+        //let comment1_offset_y = self.settings.comment1_offset_y;
+        //let comment1 = self.comment1.as_ref().unwrap();
+        //self.render_comment(comment1, comment1_offset_y, c);
+
+        //self.render_comment(self.comment2.get_ref(), self.settings.comment2_offset_y, c);
     }
 
-    fn render_comment(&self, comment: &Texture, y: f64, c: &Context, gl: &mut Gl) {
+    fn render_comment(&mut self, comment: &Texture, y: f64, c: &Context) {
         let (width, height) = comment.get_size();
         let w = self.settings.window_size[0] as f64 - 2.0 * self.settings.board_padding;
         let h = height as f64 * w / width as f64;
@@ -64,22 +71,24 @@ impl<'a> App<'a> {
          .rgb(self.settings.text_dark_color[0],
               self.settings.text_dark_color[1],
               self.settings.text_dark_color[2])
-         .draw(gl);
+         .draw(&mut self.gl);
     }
 }
 
 impl<'a> Game for App<'a> {
-    fn load(&mut self, asset_store: &mut AssetStore) {
-        self.number_renderer = Some(NumberRenderer::new(asset_store));
+    fn load(&mut self) {
+        let asset_store = AssetStore::from_folder(self.settings.asset_folder.as_slice());
+        self.number_renderer = Some(NumberRenderer::new(&asset_store));
 
         self.logo = Some(Texture::from_path(&asset_store.path("logo.png").unwrap()).unwrap());
         self.comment1 = Some(Texture::from_path(&asset_store.path("comment1.png").unwrap()).unwrap());
         self.comment2 = Some(Texture::from_path(&asset_store.path("comment2.png").unwrap()).unwrap());
     }
 
-    fn render(&self, c: &Context, args: &mut RenderArgs) {
-        self.render_ui(c, args.gl);
-        self.board.render(self.number_renderer.get_ref(), c, args.gl);
+    fn render(&mut self, args: &mut RenderArgs) {
+        let ref c = Context::abs(args.width as f64, args.height as f64);
+        self.render_ui(c);
+        self.board.render(self.number_renderer.get_ref(), c, &mut self.gl);
     }
 
     fn update(&mut self, args: &mut UpdateArgs) {
