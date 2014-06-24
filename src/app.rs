@@ -87,6 +87,10 @@ impl<'a> Game for App<'a> {
 
     fn render(&mut self, args: &mut RenderArgs) {
         let ref c = Context::abs(args.width as f64, args.height as f64);
+
+        let bg = c.rgba(self.settings.window_background_color[0], self.settings.window_background_color[1], self.settings.window_background_color[2], 1.0);
+        bg.clear(&mut self.gl);
+
         self.render_ui(c);
         self.board.render(self.number_renderer.get_ref(), c, &mut self.gl);
     }
