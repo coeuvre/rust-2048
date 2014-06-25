@@ -53,25 +53,26 @@ impl<'a> App<'a> {
                self.settings.label_color[1],
                self.settings.label_color[2],
                1.0)
-         .fill(&mut self.gl);
+         .draw(&mut self.gl);
 
-        //let comment1_offset_y = self.settings.comment1_offset_y;
-        //let comment1 = self.comment1.as_ref().unwrap();
-        //self.render_comment(comment1, comment1_offset_y, c);
-
-        //self.render_comment(self.comment2.get_ref(), self.settings.comment2_offset_y, c);
+        let comment1_offset_y = self.settings.comment1_offset_y;
+        let comment1 = self.comment1.as_ref().unwrap();
+        App::render_comment(self.settings, comment1, comment1_offset_y, c, &mut self.gl);
+        let comment2_offset_y = self.settings.comment2_offset_y;
+        let comment2 = self.comment2.as_ref().unwrap();
+        App::render_comment(self.settings, comment2, comment2_offset_y, c, &mut self.gl);
     }
 
-    fn render_comment(&mut self, comment: &Texture, y: f64, c: &Context) {
+    fn render_comment(settings: &Settings, comment: &Texture, y: f64, c: &Context, gl: &mut Gl) {
         let (width, height) = comment.get_size();
-        let w = self.settings.window_size[0] as f64 - 2.0 * self.settings.board_padding;
+        let w = settings.window_size[0] as f64 - 2.0 * settings.board_padding;
         let h = height as f64 * w / width as f64;
-        c.rect(self.settings.board_padding, y, w, h)
+        c.rect(settings.board_padding, y, w, h)
          .image(comment)
-         .rgb(self.settings.text_dark_color[0],
-              self.settings.text_dark_color[1],
-              self.settings.text_dark_color[2])
-         .draw(&mut self.gl);
+         .rgb(settings.text_dark_color[0],
+              settings.text_dark_color[1],
+              settings.text_dark_color[2])
+         .draw(gl);
     }
 }
 
@@ -89,7 +90,7 @@ impl<'a> Game for App<'a> {
         let ref c = Context::abs(args.width as f64, args.height as f64);
 
         let bg = c.rgba(self.settings.window_background_color[0], self.settings.window_background_color[1], self.settings.window_background_color[2], 1.0);
-        bg.clear(&mut self.gl);
+        bg.draw(&mut self.gl);
 
         self.render_ui(c);
         self.board.render(self.number_renderer.get_ref(), c, &mut self.gl);
