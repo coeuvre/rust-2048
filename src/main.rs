@@ -5,8 +5,11 @@ extern crate serialize;
 
 extern crate graphics;
 extern crate piston;
+extern crate opengl_graphics;
+extern crate sdl2_game_window;
 
 use piston::*;
+use sdl2_game_window::GameWindowSDL2;
 
 mod app;
 mod board;

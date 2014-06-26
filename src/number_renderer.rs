@@ -3,6 +3,10 @@ use graphics::*;
 use piston::{
     AssetStore,
 };
+use opengl_graphics::{
+    Gl,
+    Texture,
+};
 
 static DIGITS_WIDTH: f64 = 20.0;
 static DIGITS_HEIGHT: f64 = 26.0;

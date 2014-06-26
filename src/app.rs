@@ -5,6 +5,10 @@ use piston::*;
 use board::Board;
 use number_renderer::NumberRenderer;
 use settings::Settings;
+use opengl_graphics::{
+    Gl,
+    Texture,
+};
 
 pub struct App<'a> {
     board: Board<'a>,

@@ -1,6 +1,7 @@
 
 use graphics::*;
 use piston::*;
+use opengl_graphics::Gl;
 use number_renderer::NumberRenderer;
 use settings::Settings;
 
