@@ -125,7 +125,7 @@ impl<'a> Tile<'a> {
          .rect_centered(x + self.settings.tile_size / 2.0,
                         y + self.settings.tile_size / 2.0,
                         w / 2.0, h / 2.0)
-         .rgba(color[0], color[1], color[2], 1.0).fill(gl);
+         .rgba(color[0], color[1], color[2], 1.0).draw(gl);
 
         let color = if self.score >= 8 {
             self.settings.text_light_color

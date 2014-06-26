@@ -357,7 +357,7 @@ impl<'a> Board<'a> {
                self.settings.tile_background_color[1],
                self.settings.tile_background_color[2],
                1.0)
-         .fill(gl);
+         .draw(gl);
 
         let mut x = self.settings.board_padding + self.settings.tile_padding;
         let mut y = self.settings.board_padding + self.settings.board_offset_y + self.settings.tile_padding;
@@ -369,7 +369,7 @@ impl<'a> Board<'a> {
                        self.settings.tiles_colors.get(0)[1],
                        self.settings.tiles_colors.get(0)[2],
                        1.0)
-                 .fill(gl);
+                 .draw(gl);
 
                 x += self.settings.tile_padding + self.settings.tile_size;
             }
