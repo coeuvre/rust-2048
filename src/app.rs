@@ -18,6 +18,7 @@ pub struct App<'a> {
     logo: Option<Texture>,
     comment1: Option<Texture>,
     comment2: Option<Texture>,
+    window_background_color: [f32, ..4],
 
     gl: Gl,
 }
@@ -32,6 +33,7 @@ impl<'a> App<'a> {
             logo: None,
             comment1: None,
             comment2: None,
+            window_background_color: [1.0, 1.0, 1.0, 1.0],
 
             gl: Gl::new(),
         }
@@ -90,17 +92,16 @@ impl<'a> Game for App<'a> {
         self.comment2 = Some(Texture::from_path(&asset_store.path("comment2.png").unwrap()).unwrap());
     }
 
-    fn render(&mut self, args: &mut RenderArgs) {
+    fn render(&mut self, args: &RenderArgs) {
+        self.gl.viewport(0, 0, args.width as i32, args.height as i32);
         let ref c = Context::abs(args.width as f64, args.height as f64);
-
-        let bg = c.rgba(self.settings.window_background_color[0], self.settings.window_background_color[1], self.settings.window_background_color[2], 1.0);
-        bg.draw(&mut self.gl);
+        c.color(self.window_background_color).draw(&mut self.gl);
 
         self.render_ui(c);
         self.board.render(self.number_renderer.get_ref(), c, &mut self.gl);
     }
 
-    fn update(&mut self, args: &mut UpdateArgs) {
+    fn update(&mut self, args: &UpdateArgs) {
         self.board.update(args.dt);
     }
 
