@@ -1,0 +1,30 @@
+[package]
+
+name = "rust-2048"
+version = "0.0.0"
+readme = "README.md"
+authors = ["coeuvre <coeuvre@gmail.com>"]
+tags = []
+
+[[bin]]
+
+name = "rust-2048"
+path = "src/main.rs"
+
+[dependencies.graphics]
+
+git = "https://github.com/pistondevelopers/rust-graphics"
+
+[dependencies.piston]
+
+git = "https://github.com/pistondevelopers/piston/"
+
+[dependencies.opengl_graphics]
+
+git = "https://github.com/pistondevelopers/opengl_graphics"
+
+[dependencies.sdl2_game_window]
+
+git = "https://github.com/pistondevelopers/sdl2_game_window"
+
+
