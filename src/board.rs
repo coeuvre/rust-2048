@@ -60,12 +60,12 @@ impl<'a> Board<'a> {
         let mut tiles_need_removed = HashSet::<uint>::new();
         let mut tiles_need_added = Vec::<Tile>::new();
         for i in range(0, self.tiles.len()) {
-            let tile1 = self.tiles.get(i);
+            let tile1 = &self.tiles[i];
             if tile1.status != TileStatic {
                 continue;
             }
             for j in range(i + 1, self.tiles.len()) {
-                let tile2 = self.tiles.get(j);
+                let tile2 = &self.tiles[j];
                 if tile2.status != TileStatic
                    || tile1.tile_x != tile2.tile_x
                    || tile1.tile_y != tile2.tile_y {
@@ -84,7 +84,7 @@ impl<'a> Board<'a> {
             let mut tiles = Vec::<Tile>::new();
             for i in range(0, self.tiles.len()) {
                 if !tiles_need_removed.contains(&i) {
-                    tiles.push(*self.tiles.get(i));
+                    tiles.push(self.tiles[i]);
                 }
             }
             self.tiles = tiles.append(tiles_need_added.as_slice());
@@ -368,9 +368,9 @@ impl<'a> Board<'a> {
             for _ in range(0, self.settings.tile_width) {
                 c.view()
                  .rect(x, y, self.settings.tile_size, self.settings.tile_size)
-                 .rgba(self.settings.tiles_colors.get(0)[0],
-                       self.settings.tiles_colors.get(0)[1],
-                       self.settings.tiles_colors.get(0)[2],
+                 .rgba(self.settings.tiles_colors[0][0],
+                       self.settings.tiles_colors[0][1],
+                       self.settings.tiles_colors[0][2],
                        1.0)
                  .draw(gl);
 

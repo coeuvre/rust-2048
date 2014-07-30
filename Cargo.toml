@@ -2,9 +2,7 @@
 
 name = "rust-2048"
 version = "0.0.0"
-readme = "README.md"
 authors = ["coeuvre <coeuvre@gmail.com>"]
-tags = []
 
 [[bin]]
 

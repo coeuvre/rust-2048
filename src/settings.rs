@@ -52,9 +52,9 @@ impl Settings {
         let mut tiles_colors = Vec::<[f32, ..3]>::new();
         for color in s.tiles_colors.iter() {
             tiles_colors.push([
-                *color.get(0) / 255.0,
-                *color.get(1) / 255.0,
-                *color.get(2) / 255.0,
+                color[0] / 255.0,
+                color[1] / 255.0,
+                color[2] / 255.0,
             ]);
         }
         Settings {
@@ -66,9 +66,9 @@ impl Settings {
                 (s.board_padding * 2.0 + board_size[1] + s.board_offset_y) as u32,
             ],
             window_background_color: [
-                *s.window_background_color.get(0) / 255.0,
-                *s.window_background_color.get(1) / 255.0,
-                *s.window_background_color.get(2) / 255.0,
+                s.window_background_color[0] / 255.0,
+                s.window_background_color[1] / 255.0,
+                s.window_background_color[2] / 255.0,
             ],
             board_padding: s.board_padding,
             board_size: board_size,
@@ -78,50 +78,50 @@ impl Settings {
             tile_size: s.tile_size,
             tile_padding: s.tile_padding,
             tile_background_color: [
-                *s.tile_background_color.get(0) / 255.0,
-                *s.tile_background_color.get(1) / 255.0,
-                *s.tile_background_color.get(2) / 255.0,
+                s.tile_background_color[0] / 255.0,
+                s.tile_background_color[1] / 255.0,
+                s.tile_background_color[2] / 255.0,
             ],
             tiles_colors: tiles_colors,
             tile_unknow_color: [
-                *s.tile_unknow_color.get(0) / 255.0,
-                *s.tile_unknow_color.get(1) / 255.0,
-                *s.tile_unknow_color.get(2) / 255.0,
+                s.tile_unknow_color[0] / 255.0,
+                s.tile_unknow_color[1] / 255.0,
+                s.tile_unknow_color[2] / 255.0,
             ],
             tile_move_time: s.tile_move_time,
             tile_new_time: s.tile_new_time,
             tile_combine_time: s.tile_combine_time,
             best_rect: [
-                *s.best_rect.get(0),
-                *s.best_rect.get(1),
-                *s.best_rect.get(2),
-                *s.best_rect.get(3),
+                s.best_rect[0],
+                s.best_rect[1],
+                s.best_rect[2],
+                s.best_rect[3],
             ],
             score_rect: [
-                *s.score_rect.get(0),
-                *s.score_rect.get(1),
-                *s.score_rect.get(2),
-                *s.score_rect.get(3),
+                s.score_rect[0],
+                s.score_rect[1],
+                s.score_rect[2],
+                s.score_rect[3],
             ],
             label_color: [
-                *s.label_color.get(0) / 255.0,
-                *s.label_color.get(1) / 255.0,
-                *s.label_color.get(2) / 255.0,
+                s.label_color[0] / 255.0,
+                s.label_color[1] / 255.0,
+                s.label_color[2] / 255.0,
             ],
             button_color: [
-                *s.button_color.get(0) / 255.0,
-                *s.button_color.get(1) / 255.0,
-                *s.button_color.get(2) / 255.0,
+                s.button_color[0] / 255.0,
+                s.button_color[1] / 255.0,
+                s.button_color[2] / 255.0,
             ],
             text_dark_color: [
-                *s.text_dark_color.get(0) / 255.0,
-                *s.text_dark_color.get(1) / 255.0,
-                *s.text_dark_color.get(2) / 255.0,
+                s.text_dark_color[0] / 255.0,
+                s.text_dark_color[1] / 255.0,
+                s.text_dark_color[2] / 255.0,
             ],
             text_light_color: [
-                *s.text_light_color.get(0) / 255.0,
-                *s.text_light_color.get(1) / 255.0,
-                *s.text_light_color.get(2) / 255.0,
+                s.text_light_color[0] / 255.0,
+                s.text_light_color[1] / 255.0,
+                s.text_light_color[2] / 255.0,
             ],
         }
     }

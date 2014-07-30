@@ -139,7 +139,7 @@ impl<'a> Tile<'a> {
     fn get_color(&self) -> [f32, ..3] {
         let i = (self.score as f64).log2() as uint;
         if i > 0 && i < self.settings.tiles_colors.len() {
-            *self.settings.tiles_colors.get(i)
+            self.settings.tiles_colors[i]
         } else {
             self.settings.tile_unknow_color
         }
