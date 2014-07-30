@@ -11,13 +11,25 @@ Use arrow key to move tiles.
 
 ## Building Instructions
 
-Clone [piston-workspace](https://github.com/PistonDevelopers/piston-workspace) and build it (You can follow the instructions in that repo).
+To build this repository, you need [Cargo](https://github.com/rust-lang/cargo).
 
-Copy all the `syslink` files to 'target/cpu-vendor-os/lib/':
-
-In the Terminal window, navigate to the project folder and type:
-
+Clone this repository
 ```
-make run
+git clone https://github.com/Coeuvre/rust-2048.git
+```
+
+Use Cargo to build
+```
+cargo build
+```
+
+Move binary to `bin` directory
+```
+mv ./target/rust-2048 ./bin
+```
+
+Play!
+```
+./bin/rust-2048
 ```
 
