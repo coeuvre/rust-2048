@@ -5,6 +5,7 @@ use piston::*;
 use board::Board;
 use number_renderer::NumberRenderer;
 use settings::Settings;
+use sdl2_game_window::GameWindowSDL2;
 use opengl_graphics::{
     Gl,
     Texture,
@@ -38,9 +39,7 @@ impl<'a> App<'a> {
             gl: Gl::new(),
         }
     }
-}
 
-impl<'a> App<'a> {
     fn render_ui(&mut self, c: &Context) {
         // logo
         c.trans(self.settings.board_padding, self.settings.board_padding)
@@ -82,8 +81,8 @@ impl<'a> App<'a> {
     }
 }
 
-impl<'a> Game for App<'a> {
-    fn load(&mut self) {
+impl<'a> Game<GameWindowSDL2> for App<'a> {
+    fn load(&mut self, _window: &mut GameWindowSDL2) {
         let asset_store = AssetStore::from_folder(self.settings.asset_folder.as_slice());
         self.number_renderer = Some(NumberRenderer::new(&asset_store));
 
@@ -92,7 +91,7 @@ impl<'a> Game for App<'a> {
         self.comment2 = Some(Texture::from_path(&asset_store.path("comment2.png").unwrap()).unwrap());
     }
 
-    fn render(&mut self, args: &RenderArgs) {
+    fn render(&mut self, _window: &mut GameWindowSDL2, args: &RenderArgs) {
         self.gl.viewport(0, 0, args.width as i32, args.height as i32);
         let ref c = Context::abs(args.width as f64, args.height as f64);
         c.color(self.window_background_color).draw(&mut self.gl);
@@ -101,11 +100,11 @@ impl<'a> Game for App<'a> {
         self.board.render(self.number_renderer.get_ref(), c, &mut self.gl);
     }
 
-    fn update(&mut self, args: &UpdateArgs) {
+    fn update(&mut self, _window: &mut GameWindowSDL2, args: &UpdateArgs) {
         self.board.update(args.dt);
     }
 
-    fn key_press(&mut self, args: &KeyPressArgs) {
+    fn key_press(&mut self, _window: &mut GameWindowSDL2, args: &KeyPressArgs) {
         if args.key == keyboard::Left {
             self.board.merge_from_right_to_left();
         }
