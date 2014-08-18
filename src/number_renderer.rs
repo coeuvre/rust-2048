@@ -56,7 +56,7 @@ fn number_to_digits(number: u32) -> Vec<u32> {
 
     let mut n = number;
     while n != 0 {
-        digits.unshift(n % 10);
+        digits.insert(0, n % 10);
         n /= 10;
     }
     digits

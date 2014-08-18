@@ -20,7 +20,7 @@ mod tile;
 fn main() {
     let settings = settings::Settings::load();
 
-    let mut game_window = GameWindowSDL2::new(
+    let mut window = GameWindowSDL2::new(
         GameWindowSettings {
             title: "Rust-2048".to_string(),
             size: settings.window_size,
@@ -30,10 +30,27 @@ fn main() {
     );
 
     let mut app = app::App::new(&settings);
+
+    app.load();
+
     let game_iter_settings = GameIteratorSettings {
-        updates_per_second: 120,
-        max_frames_per_second: 60,
+            updates_per_second: 120,
+            max_frames_per_second: 60,
     };
-    app.run(&mut game_window, &game_iter_settings);
+
+    for e in GameIterator::new(&mut window, &game_iter_settings) {
+        match e {
+            Render(ref args) => {
+                app.render(args);
+            },
+            Update(ref args) => {
+                app.update(args);
+            },
+            KeyPress(ref args) => {
+                app.key_press(args);
+            },
+            _ => {},
+        }
+    }
 }
 

@@ -80,10 +80,8 @@ impl<'a> App<'a> {
               settings.text_dark_color[2])
          .draw(gl);
     }
-}
 
-impl<'a> Game for App<'a> {
-    fn load(&mut self) {
+    pub fn load(&mut self) {
         let asset_store = AssetStore::from_folder(self.settings.asset_folder.as_slice());
         self.number_renderer = Some(NumberRenderer::new(&asset_store));
 
@@ -92,7 +90,7 @@ impl<'a> Game for App<'a> {
         self.comment2 = Some(Texture::from_path(&asset_store.path("comment2.png").unwrap()).unwrap());
     }
 
-    fn render(&mut self, args: &RenderArgs) {
+    pub fn render(&mut self, args: &RenderArgs) {
         self.gl.viewport(0, 0, args.width as i32, args.height as i32);
         let ref c = Context::abs(args.width as f64, args.height as f64);
         c.color(self.window_background_color).draw(&mut self.gl);
@@ -101,11 +99,11 @@ impl<'a> Game for App<'a> {
         self.board.render(self.number_renderer.get_ref(), c, &mut self.gl);
     }
 
-    fn update(&mut self, args: &UpdateArgs) {
+    pub fn update(&mut self, args: &UpdateArgs) {
         self.board.update(args.dt);
     }
 
-    fn key_press(&mut self, args: &KeyPressArgs) {
+    pub fn key_press(&mut self, args: &KeyPressArgs) {
         if args.key == keyboard::Left {
             self.board.merge_from_right_to_left();
         }
