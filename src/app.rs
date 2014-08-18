@@ -38,9 +38,7 @@ impl<'a> App<'a> {
             gl: Gl::new(),
         }
     }
-}
 
-impl<'a> App<'a> {
     fn render_ui(&mut self, c: &Context) {
         // logo
         c.trans(self.settings.board_padding, self.settings.board_padding)
