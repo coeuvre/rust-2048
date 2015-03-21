@@ -1,8 +1,5 @@
 
 use graphics::*;
-use piston::{
-    AssetStore,
-};
 use opengl_graphics::{
     Gl,
     Texture,
@@ -16,14 +13,14 @@ pub struct NumberRenderer {
 }
 
 impl NumberRenderer {
-    pub fn new(asset_store: &AssetStore) -> NumberRenderer {
+    pub fn new() -> NumberRenderer {
         NumberRenderer {
-            image: Texture::from_path(&asset_store.path("digits.png").unwrap()).unwrap(),
+            image: Texture::from_path(Path::new("digits.png")).unwrap(),
         }
     }
 
     pub fn render(&self, number: u32, center_x: f64, center_y: f64, max_width: f64,
-                  color: [f32, ..3], c: &Context, gl: &mut Gl) {
+                  color: [f32; ..3], c: &Context, gl: &mut Gl) {
         let digits = number_to_digits(number);
         let total_width = DIGITS_WIDTH * digits.len() as f64;
         let total_width = if total_width > max_width {

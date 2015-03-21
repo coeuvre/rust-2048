@@ -1,6 +1,6 @@
-
 use graphics::*;
 use piston::*;
+use piston::events::{ RenderArgs, UpdateArgs };
 
 use board::Board;
 use number_renderer::NumberRenderer;
@@ -18,7 +18,7 @@ pub struct App<'a> {
     logo: Option<Texture>,
     comment1: Option<Texture>,
     comment2: Option<Texture>,
-    window_background_color: [f32, ..4],
+    window_background_color: [f32; ..4],
 
     gl: Gl,
 }
@@ -80,7 +80,7 @@ impl<'a> App<'a> {
     }
 
     pub fn load(&mut self) {
-        let asset_store = AssetStore::from_folder(self.settings.asset_folder.as_slice());
+        let asset_store = Path::new(self.settings.asset_folder.as_slice());
         self.number_renderer = Some(NumberRenderer::new(&asset_store));
 
         self.logo = Some(Texture::from_path(&asset_store.path("logo.png").unwrap()).unwrap());
@@ -102,19 +102,26 @@ impl<'a> App<'a> {
     }
 
     pub fn key_press(&mut self, args: &KeyPressArgs) {
-        if args.key == keyboard::Left {
+        use piston::input::Button::Keyboard;
+        use piston::input::keyboard::Key;
+
+        if args.key == Keyboard(Key::Left) {
             self.board.merge_from_right_to_left();
         }
-        if args.key == keyboard::Right {
+        
+        if args.key == Keyboard(Key::Right) {
             self.board.merge_from_left_to_right();
         }
-        if args.key == keyboard::Up {
+        
+        if args.key == Keyboard(Key::Up) {
             self.board.merge_from_bottom_to_top();
         }
-        if args.key == keyboard::Down {
+        
+        if args.key == Keyboard(Key::Down) {
             self.board.merge_from_top_to_bottom();
         }
-        if args.key == keyboard::Space {
+        
+        if args.key == Keyboard(Key::Space) {
             self.board = Board::new(self.settings);
         }
     }

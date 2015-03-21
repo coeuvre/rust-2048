@@ -9,20 +9,15 @@ authors = ["coeuvre <coeuvre@gmail.com>"]
 name = "rust-2048"
 path = "src/main.rs"
 
-[dependencies.graphics]
-
-git = "https://github.com/pistondevelopers/rust-graphics"
+[dependencies.piston2d-graphics]
+git = "https://github.com/pistondevelopers/graphics"
 
 [dependencies.piston]
+git = "https://github.com/pistondevelopers/piston"
 
-git = "https://github.com/pistondevelopers/piston/"
-
-[dependencies.opengl_graphics]
-
+[dependencies.piston2d-opengl_graphics]
 git = "https://github.com/pistondevelopers/opengl_graphics"
 
-[dependencies.sdl2_window]
-
+[dependencies.pistoncore-sdl2_window]
 git = "https://github.com/pistondevelopers/sdl2_window"
-
 
