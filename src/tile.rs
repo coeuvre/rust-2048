@@ -5,7 +5,7 @@ use opengl_graphics::Gl;
 use number_renderer::NumberRenderer;
 use settings::Settings;
 
-#[deriving(Clone, PartialEq)]
+#[derive(Clone, PartialEq)]
 pub enum TileState {
     TileStatic,
     /// (t, x, y, origin_x, origin_x)
@@ -16,7 +16,7 @@ pub enum TileState {
     TileCombine(f64, f64),
 }
 
-#[deriving(Clone)]
+#[derive(Clone)]
 pub struct Tile<'a> {
     pub score: int,
     pub tile_x: int,
@@ -32,7 +32,7 @@ impl<'a> Tile<'a> {
             score: score,
             tile_x: tile_x,
             tile_y: tile_y,
-            status: TileNew(settings.tile_new_time, 0.0),
+            status: TileState::TileNew(settings.tile_new_time, 0.0),
 
             settings: settings,
         }
@@ -43,7 +43,7 @@ impl<'a> Tile<'a> {
             score: score,
             tile_x: tile_x,
             tile_y: tile_y,
-            status: TileCombine(settings.tile_combine_time, 1.2 * settings.tile_size),
+            status: TileState::TileCombine(settings.tile_combine_time, 1.2 * settings.tile_size),
 
             settings: settings,
         }
@@ -57,15 +57,15 @@ impl<'a> Tile<'a> {
 
     pub fn start_moving(&mut self, destination_tile_x: int, destination_tile_y: int) {
         match self.status {
-            TileMoving(_, _, _, ox, oy) => {
+            TileState::TileMoving(_, _, _, ox, oy) => {
                 let (x, y) = self.tile_to_pos(ox, oy);
-                self.status = TileMoving(self.settings.tile_move_time, x, y, ox, oy);
+                self.status = TileState::TileMoving(self.settings.tile_move_time, x, y, ox, oy);
                 self.tile_x = destination_tile_x;
                 self.tile_y = destination_tile_y;
             },
-            TileStatic => {
+            TileState::TileStatic => {
                 let (x, y) = self.tile_to_pos(self.tile_x, self.tile_y);
-                self.status = TileMoving(self.settings.tile_move_time, x, y, self.tile_x, self.tile_y);
+                self.status = TileState::TileMoving(self.settings.tile_move_time, x, y, self.tile_x, self.tile_y);
                 self.tile_x = destination_tile_x;
                 self.tile_y = destination_tile_y;
             },
@@ -75,29 +75,29 @@ impl<'a> Tile<'a> {
 
     pub fn update(&mut self, dt: f64) {
         match self.status {
-            TileMoving(t, x, y, ox, oy) => {
+            TileState::TileMoving(t, x, y, ox, oy) => {
                 if dt >= t {
-                    self.status = TileStatic;
+                    self.status = TileState::TileStatic;
                 } else {
                     let (dx, dy) = self.tile_to_pos(self.tile_x, self.tile_y);
                     let factor = dt / t;
-                    self.status = TileMoving(t - dt, x + factor * (dx - x), y + factor * (dy - y), ox, oy);
+                    self.status = TileState::TileMoving(t - dt, x + factor * (dx - x), y + factor * (dy - y), ox, oy);
                 }
             },
-            TileNew(t, size) => {
+            TileState::TileNew(t, size) => {
                 if dt >= t {
-                    self.status = TileStatic;
+                    self.status = TileState::TileStatic;
                 } else {
                     let factor = dt / t;
-                    self.status = TileNew(t - dt, size + factor * (self.settings.tile_size - size));
+                    self.status = TileState::TileNew(t - dt, size + factor * (self.settings.tile_size - size));
                 }
             },
-            TileCombine(t, size) => {
+            TileState::TileCombine(t, size) => {
                 if dt >= t {
-                    self.status = TileStatic;
+                    self.status = TileState::TileStatic;
                 } else {
                     let factor = dt / t;
-                    self.status = TileCombine(t - dt, size + factor * (self.settings.tile_size - size));
+                    self.status = TileState::TileCombine(t - dt, size + factor * (self.settings.tile_size - size));
                 }
             },
             _ => {},
@@ -108,13 +108,13 @@ impl<'a> Tile<'a> {
         let mut pos = self.tile_to_pos(self.tile_x, self.tile_y);
         let mut size = (self.settings.tile_size, self.settings.tile_size);
         match self.status {
-            TileMoving(_, x, y, _, _) => {
+            TileState::TileMoving(_, x, y, _, _) => {
                 pos = (x, y);
             },
-            TileNew(_, s) => {
+            TileState::TileNew(_, s) => {
                 size = (s, s);
             },
-            TileCombine(_, s) => {
+            TileState::TileCombine(_, s) => {
                 size = (s, s);
             },
             _ => {},
@@ -136,7 +136,7 @@ impl<'a> Tile<'a> {
         number_renderer.render(self.score as u32, x + self.settings.tile_size / 2.0, y + self.settings.tile_size / 2.0, self.settings.tile_size, color, c, gl);
     }
 
-    fn get_color(&self) -> [f32, ..3] {
+    fn get_color(&self) -> [f32; ..3] {
         let i = (self.score as f64).log2() as uint;
         if i > 0 && i < self.settings.tiles_colors.len() {
             self.settings.tiles_colors[i]

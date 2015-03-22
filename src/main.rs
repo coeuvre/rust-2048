@@ -6,10 +6,10 @@ extern crate serialize;
 extern crate graphics;
 extern crate piston;
 extern crate opengl_graphics;
-extern crate sdl2_game_window;
+extern crate sdl2_window;
 
 use piston::*;
-use sdl2_game_window::GameWindowSDL2;
+use sdl2_window::Sdl2Window;
 
 mod app;
 mod board;
@@ -20,8 +20,8 @@ mod tile;
 fn main() {
     let settings = settings::Settings::load();
 
-    let mut window = GameWindowSDL2::new(
-        GameWindowSettings {
+    let mut window = Sdl2Window::new(
+        Sdl2Window {
             title: "Rust-2048".to_string(),
             size: settings.window_size,
             fullscreen: false,
@@ -33,12 +33,32 @@ fn main() {
 
     app.load();
 
+		/*
     let game_iter_settings = GameIteratorSettings {
             updates_per_second: 120,
             max_frames_per_second: 60,
     };
+    */
 
+    for e in piston::events(&window) {
+        use piston::event::{ RenderEvent, PressEvent };
+
+        if let Some(args) = e.render_args() {
+            app.render(args);
+        }
+
+        if let Some(args) = e.update_args() {
+            app.update(args);
+        }
+
+        if let Some(args) = e.press_args() {
+            app.key_press(args);
+        }
+    }
+
+		/*
     for e in GameIterator::new(&mut window, &game_iter_settings) {
+    
         match e {
             Render(ref args) => {
                 app.render(args);
@@ -52,5 +72,6 @@ fn main() {
             _ => {},
         }
     }
+    */
 }
 

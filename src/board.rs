@@ -1,6 +1,6 @@
 
 use std::iter::range_step;
-use std::collections::hashmap::HashSet;
+use std::collections::HashSet;
 use std::rand::random;
 use graphics::*;
 use piston::*;
@@ -11,7 +11,7 @@ use number_renderer::NumberRenderer;
 use settings::Settings;
 use tile::{
     Tile,
-    TileStatic,
+    TileState,
 };
 
 pub struct Board<'a> {
@@ -61,12 +61,12 @@ impl<'a> Board<'a> {
         let mut tiles_need_added = Vec::<Tile>::new();
         for i in range(0, self.tiles.len()) {
             let tile1 = &self.tiles[i];
-            if tile1.status != TileStatic {
+            if tile1.status != TileState::TileStatic {
                 continue;
             }
             for j in range(i + 1, self.tiles.len()) {
                 let tile2 = &self.tiles[j];
-                if tile2.status != TileStatic
+                if tile2.status != TileState::TileStatic
                    || tile1.tile_x != tile2.tile_x
                    || tile1.tile_y != tile2.tile_y {
                     continue;
@@ -277,7 +277,7 @@ impl<'a> Board<'a> {
 
     fn is_locking(&self) -> bool {
         for tile in self.tiles.iter() {
-            if tile.status != TileStatic {
+            if tile.status != TileState::TileStatic {
                 return true;
             }
         }
