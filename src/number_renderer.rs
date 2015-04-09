@@ -1,4 +1,5 @@
 
+use std::path::Path;
 use graphics::*;
 use opengl_graphics::{
     Gl,
@@ -15,12 +16,12 @@ pub struct NumberRenderer {
 impl NumberRenderer {
     pub fn new() -> NumberRenderer {
         NumberRenderer {
-            image: Texture::from_path(Path::new("digits.png")).unwrap(),
+            image: Texture::from_path(Path::new("bin/assets/digits.png")).unwrap(),
         }
     }
 
     pub fn render(&self, number: u32, center_x: f64, center_y: f64, max_width: f64,
-                  color: [f32; ..3], c: &Context, gl: &mut Gl) {
+                  color: [f32; 3], c: &Context, gl: &mut Gl) {
         let digits = number_to_digits(number);
         let total_width = DIGITS_WIDTH * digits.len() as f64;
         let total_width = if total_width > max_width {
@@ -34,11 +35,13 @@ impl NumberRenderer {
         let y = center_y - height / 2.0;
 
         for digit in digits.iter() {
-            c.rect(x, y, width, height)
-             .image(&self.image)
-             .src_rect((*digit * DIGITS_WIDTH as u32) as i32, 0, DIGITS_WIDTH as i32, DIGITS_HEIGHT as i32)
-             .rgba(color[0], color[1], color[2], 1.0)
-             .draw(gl);
+            Image::new_colored([color[0], color[1], color[2], 1.0])
+                .src_rect([(*digit * DIGITS_WIDTH as u32) as i32, 0, (*digit * DIGITS_WIDTH as u32) as i32 + DIGITS_WIDTH as i32, DIGITS_HEIGHT as i32])
+                .rect([x, y, width, height])
+                .draw(&self.image,
+                      default_draw_state(),
+                      c.transform,
+                      gl);
             x += width;
         }
     }
@@ -58,4 +61,3 @@ fn number_to_digits(number: u32) -> Vec<u32> {
     }
     digits
 }
-
