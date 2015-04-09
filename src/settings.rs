@@ -220,6 +220,7 @@ impl SettingsInJson {
         exe_path.pop();
         let path = exe_path.join(Path::new(SETTING_FILENAME));
         if !path.as_path().exists() || !path.is_file() {
+            println!("Configuration file not found. Generating a default one.");
             let default = SettingsInJson::default_settings();
             default.save();
             return default;
@@ -236,8 +237,7 @@ impl SettingsInJson {
             println!("WARNING: Failed to save settings: can't find exe path.");
             return;
         }
-        let mut path = exe_path.unwrap();
-        path.pop();
+        let path = exe_path.unwrap();
         let file = File::create(&path.with_file_name(SETTING_FILENAME)).unwrap();
         let mut writer = BufWriter::new(file);
 
