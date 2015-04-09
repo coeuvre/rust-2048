@@ -23,13 +23,7 @@ Use Cargo to build
 cargo build
 ```
 
-Move binary to `bin` directory
-```
-mv ./target/rust-2048 ./bin
-```
-
 Play!
 ```
-./bin/rust-2048
+cargo run
 ```
-
