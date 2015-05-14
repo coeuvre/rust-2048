@@ -2,7 +2,7 @@
 use std::path::Path;
 use graphics::*;
 use opengl_graphics::{
-    Gl,
+    GlGraphics,
     Texture,
 };
 
@@ -21,7 +21,7 @@ impl NumberRenderer {
     }
 
     pub fn render(&self, number: u32, center_x: f64, center_y: f64, max_width: f64,
-                  color: [f32; 3], c: &Context, gl: &mut Gl) {
+                  color: [f32; 3], c: &Context, gl: &mut GlGraphics) {
         let digits = number_to_digits(number);
         let total_width = DIGITS_WIDTH * digits.len() as f64;
         let total_width = if total_width > max_width {
@@ -36,7 +36,7 @@ impl NumberRenderer {
 
         for digit in digits.iter() {
             Image::new_colored([color[0], color[1], color[2], 1.0])
-                .src_rect([(*digit * DIGITS_WIDTH as u32) as i32, 0, (*digit * DIGITS_WIDTH as u32) as i32 + DIGITS_WIDTH as i32, DIGITS_HEIGHT as i32])
+                .src_rect([(*digit * DIGITS_WIDTH as u32) as i32, 0, DIGITS_WIDTH as i32, DIGITS_HEIGHT as i32])
                 .rect([x, y, width, height])
                 .draw(&self.image,
                       default_draw_state(),
