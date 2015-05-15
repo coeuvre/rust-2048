@@ -1,7 +1,7 @@
 
 use std::env::current_exe;
 use std::io::{BufWriter, BufReader, Write};
-use std::fs::{File,PathExt};
+use std::fs::{File};
 use std::path::Path;
 use rustc_serialize::{
     json,
@@ -219,7 +219,8 @@ impl SettingsInJson {
         let mut exe_path = exe_path.unwrap();
         exe_path.pop();
         let path = exe_path.join(Path::new(SETTING_FILENAME));
-        if !path.as_path().exists() || !path.is_file() {
+// FIXME: use this if possible  (.exists() is unstable in Rust 1.0.0)
+/*      if !path.as_path().exists() || !path.is_file() {
             println!("Configuration file not found. Generating a default one.");
             let default = SettingsInJson::default_settings();
             default.save();
@@ -227,6 +228,19 @@ impl SettingsInJson {
         }
         let file = File::open(&path).unwrap();
         let mut reader = BufReader::new(file);
+*/
+        let file = File::open(&path);
+        match file {
+            Err(e) => {
+                println!("Configuration file can't be open ({}). Try to generate a default one.", e);
+                let default = SettingsInJson::default_settings();
+                default.save();
+                return default;
+            },
+            _ => {}
+        }
+        let mut reader = BufReader::new(file.unwrap());
+// End FIXME
         let mut decoder = json::Decoder::new(json::Json::from_reader(&mut reader).unwrap());
         Decodable::decode(&mut decoder).unwrap()
     }
