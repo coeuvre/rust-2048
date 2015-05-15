@@ -1,6 +1,6 @@
 
 use graphics::*;
-use opengl_graphics::Gl;
+use opengl_graphics::GlGraphics;
 use number_renderer::NumberRenderer;
 use settings::Settings;
 
@@ -103,7 +103,7 @@ impl<'a> Tile<'a> {
         }
     }
 
-    pub fn render(&self, number_renderer: &NumberRenderer, c: &Context, gl: &mut Gl) {
+    pub fn render(&self, number_renderer: &NumberRenderer, c: &Context, gl: &mut GlGraphics) {
         let mut pos = self.tile_to_pos(self.tile_x, self.tile_y);
         let mut size = (self.settings.tile_size, self.settings.tile_size);
         match self.status {

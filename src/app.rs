@@ -100,7 +100,7 @@ impl<'a> App<'a> {
         let w_bg_col = self.window_background_color;
         let ref nr = self.number_renderer;
 
-        gl.draw([0,0,args.width as i32, args.height as i32], |_, gl| {
+        gl.draw(args.viewport(), |_, gl| {
             clear(w_bg_col, gl);
             self.render_ui(c, gl);
             self.board.render(nr.iter().next().unwrap(), c, gl);
