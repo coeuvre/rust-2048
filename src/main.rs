@@ -1,6 +1,3 @@
-
-#![feature(core,collections,path_ext)]
-
 extern crate rustc_serialize;
 extern crate rand;
 
@@ -45,19 +42,19 @@ fn main() {
 
     for e in window.events() {
         use piston::event::{ RenderEvent, PressEvent };
-
         if let Some(ref args) = e.render_args() {
             app.render(args, &mut gl);
         }
 
-        if let Some(ref args) = e.update_args() {
-            app.update(args);
+       if let Some(ref args) = e.update_args() {
+           // TODO: only update if necessary
+           // println!("update");
+           app.update(args);
         }
-
         if let Some(ref args) = e.press_args() {
             app.key_press(args);
         }
-    }
+}
 
 		/*
     for e in GameIterator::new(&mut window, &game_iter_settings) {
