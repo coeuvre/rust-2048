@@ -1,7 +1,6 @@
 
 use graphics::*;
-use piston::*;
-use opengl_graphics::Gl;
+use opengl_graphics::GlGraphics;
 use number_renderer::NumberRenderer;
 use settings::Settings;
 
@@ -9,7 +8,7 @@ use settings::Settings;
 pub enum TileState {
     TileStatic,
     /// (t, x, y, origin_x, origin_x)
-    TileMoving(f64, f64, f64, int, int),
+    TileMoving(f64, f64, f64, i32, i32),
     /// (t, size)
     TileNew(f64, f64),
     /// (t, size)
@@ -18,16 +17,16 @@ pub enum TileState {
 
 #[derive(Clone)]
 pub struct Tile<'a> {
-    pub score: int,
-    pub tile_x: int,
-    pub tile_y: int,
+    pub score: i32,
+    pub tile_x: i32,
+    pub tile_y: i32,
     pub status: TileState,
 
     settings: &'a Settings,
 }
 
 impl<'a> Tile<'a> {
-    pub fn new(settings: &'a Settings, score: int, tile_x: int, tile_y: int) -> Tile<'a> {
+    pub fn new(settings: &'a Settings, score: i32, tile_x: i32, tile_y: i32) -> Tile<'a> {
         Tile {
             score: score,
             tile_x: tile_x,
@@ -38,7 +37,7 @@ impl<'a> Tile<'a> {
         }
     }
 
-    pub fn new_combined(settings: &'a Settings, score: int, tile_x: int, tile_y: int) -> Tile<'a> {
+    pub fn new_combined(settings: &'a Settings, score: i32, tile_x: i32, tile_y: i32) -> Tile<'a> {
         Tile {
             score: score,
             tile_x: tile_x,
@@ -49,13 +48,13 @@ impl<'a> Tile<'a> {
         }
     }
 
-    fn tile_to_pos(&self, tile_x: int, tile_y: int) -> (f64, f64) {
+    fn tile_to_pos(&self, tile_x: i32, tile_y: i32) -> (f64, f64) {
         let x = self.settings.board_padding + tile_x as f64 * self.settings.tile_size + (tile_x + 1) as f64 * self.settings.tile_padding;
         let y = self.settings.board_padding + self.settings.board_offset_y + tile_y as f64 * self.settings.tile_size + (tile_y + 1) as f64 * self.settings.tile_padding;
         (x, y)
     }
 
-    pub fn start_moving(&mut self, destination_tile_x: int, destination_tile_y: int) {
+    pub fn start_moving(&mut self, destination_tile_x: i32, destination_tile_y: i32) {
         match self.status {
             TileState::TileMoving(_, _, _, ox, oy) => {
                 let (x, y) = self.tile_to_pos(ox, oy);
@@ -104,7 +103,7 @@ impl<'a> Tile<'a> {
         }
     }
 
-    pub fn render(&self, number_renderer: &NumberRenderer, c: &Context, gl: &mut Gl) {
+    pub fn render(&self, number_renderer: &NumberRenderer, c: &Context, gl: &mut GlGraphics) {
         let mut pos = self.tile_to_pos(self.tile_x, self.tile_y);
         let mut size = (self.settings.tile_size, self.settings.tile_size);
         match self.status {
@@ -122,11 +121,14 @@ impl<'a> Tile<'a> {
         let (x, y) = pos;
         let (w, h) = size;
         let color = self.get_color();
-        c.view()
-         .rect_centered(x + self.settings.tile_size / 2.0,
-                        y + self.settings.tile_size / 2.0,
-                        w / 2.0, h / 2.0)
-         .rgba(color[0], color[1], color[2], 1.0).draw(gl);
+
+        Rectangle::new([color[0], color[1], color[2], 1.0])
+            .draw(rectangle::centered([x + self.settings.tile_size / 2.0,
+                                       y + self.settings.tile_size / 2.,
+                                       w/2.0, h/2.0]),
+                  default_draw_state(),
+                  c.transform,
+                  gl);
 
         let color = if self.score >= 8 {
             self.settings.text_light_color
@@ -136,8 +138,8 @@ impl<'a> Tile<'a> {
         number_renderer.render(self.score as u32, x + self.settings.tile_size / 2.0, y + self.settings.tile_size / 2.0, self.settings.tile_size, color, c, gl);
     }
 
-    fn get_color(&self) -> [f32; ..3] {
-        let i = (self.score as f64).log2() as uint;
+    fn get_color(&self) -> [f32; 3] {
+        let i = (self.score as f64).log2() as usize;
         if i > 0 && i < self.settings.tiles_colors.len() {
             self.settings.tiles_colors[i]
         } else {
@@ -145,4 +147,3 @@ impl<'a> Tile<'a> {
         }
     }
 }
-

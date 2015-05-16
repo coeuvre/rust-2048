@@ -1,15 +1,15 @@
-
-#![feature(globs)]
-
-extern crate serialize;
+extern crate rustc_serialize;
+extern crate rand;
 
 extern crate graphics;
 extern crate piston;
 extern crate opengl_graphics;
 extern crate sdl2_window;
 
-use piston::*;
+use piston::event::*;
+use piston::window::{WindowSettings, Size};
 use sdl2_window::Sdl2Window;
+use opengl_graphics::{GlGraphics,OpenGL};
 
 mod app;
 mod board;
@@ -20,13 +20,12 @@ mod tile;
 fn main() {
     let settings = settings::Settings::load();
 
-    let mut window = Sdl2Window::new(
-        Sdl2Window {
-            title: "Rust-2048".to_string(),
-            size: settings.window_size,
-            fullscreen: false,
-            exit_on_esc: true,
-        }
+    let window = Sdl2Window::new(
+        OpenGL::_3_2,
+        WindowSettings::new(
+            "Rust-2048".to_string(),
+            Size { width: settings.window_size[0], height: settings.window_size[1] })
+            .exit_on_esc(true)
     );
 
     let mut app = app::App::new(&settings);
@@ -39,26 +38,27 @@ fn main() {
             max_frames_per_second: 60,
     };
     */
+    let mut gl = GlGraphics::new(OpenGL::_3_2);
 
-    for e in piston::events(&window) {
+    for e in window.events() {
         use piston::event::{ RenderEvent, PressEvent };
-
-        if let Some(args) = e.render_args() {
-            app.render(args);
+        if let Some(ref args) = e.render_args() {
+            app.render(args, &mut gl);
         }
 
-        if let Some(args) = e.update_args() {
-            app.update(args);
+       if let Some(ref args) = e.update_args() {
+           // TODO: only update if necessary
+           // println!("update");
+           app.update(args);
         }
-
-        if let Some(args) = e.press_args() {
+        if let Some(ref args) = e.press_args() {
             app.key_press(args);
         }
-    }
+}
 
 		/*
     for e in GameIterator::new(&mut window, &game_iter_settings) {
-    
+
         match e {
             Render(ref args) => {
                 app.render(args);
@@ -74,4 +74,3 @@ fn main() {
     }
     */
 }
-
