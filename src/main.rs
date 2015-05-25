@@ -7,9 +7,9 @@ extern crate opengl_graphics;
 extern crate sdl2_window;
 
 use piston::event::*;
-use piston::window::{WindowSettings, Size};
+use piston::window::{ WindowSettings, Size };
 use sdl2_window::Sdl2Window;
-use opengl_graphics::{GlGraphics,OpenGL};
+use opengl_graphics::{ GlGraphics, OpenGL };
 
 mod app;
 mod board;
@@ -32,45 +32,23 @@ fn main() {
 
     app.load();
 
-		/*
-    let game_iter_settings = GameIteratorSettings {
-            updates_per_second: 120,
-            max_frames_per_second: 60,
-    };
-    */
     let mut gl = GlGraphics::new(OpenGL::_3_2);
 
     for e in window.events() {
         use piston::event::{ RenderEvent, PressEvent };
+
         if let Some(ref args) = e.render_args() {
             app.render(args, &mut gl);
         }
 
-       if let Some(ref args) = e.update_args() {
+        if let Some(ref args) = e.update_args() {
            // TODO: only update if necessary
            // println!("update");
            app.update(args);
         }
+
         if let Some(ref args) = e.press_args() {
             app.key_press(args);
         }
-}
-
-		/*
-    for e in GameIterator::new(&mut window, &game_iter_settings) {
-
-        match e {
-            Render(ref args) => {
-                app.render(args);
-            },
-            Update(ref args) => {
-                app.update(args);
-            },
-            KeyPress(ref args) => {
-                app.key_press(args);
-            },
-            _ => {},
-        }
     }
-    */
 }

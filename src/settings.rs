@@ -3,11 +3,7 @@ use std::env::current_exe;
 use std::io::{BufWriter, BufReader, Write};
 use std::fs::{File};
 use std::path::Path;
-use rustc_serialize::{
-    json,
-    Encodable,
-    Decodable,
-};
+use rustc_serialize::{ json, Encodable, Decodable };
 
 static SETTING_FILENAME: &'static str = "settings.json";
 
@@ -47,10 +43,10 @@ impl Settings {
         let board_size = [
             s.tile_size * s.tile_width as f64 + s.tile_padding * (s.tile_width + 1) as f64,
             s.tile_size * s.tile_height as f64 + s.tile_padding * (s.tile_height + 1) as f64,
-
         ];
 
         let mut tiles_colors = Vec::<[f32; 3]>::new();
+
         for color in s.tiles_colors.iter() {
             tiles_colors.push([
                 color[0] / 255.0,
@@ -58,6 +54,7 @@ impl Settings {
                 color[2] / 255.0,
             ]);
         }
+
         Settings {
             asset_folder: s.asset_folder.clone(),
             comment1_offset_y: s.comment1_offset_y,
@@ -213,44 +210,52 @@ impl SettingsInJson {
 
     pub fn load() -> SettingsInJson {
         let exe_path = current_exe();
+
         if exe_path.is_err() {
             return SettingsInJson::default_settings();
         }
+
         let mut exe_path = exe_path.unwrap();
         exe_path.pop();
         let path = exe_path.join(Path::new(SETTING_FILENAME));
-// FIXME: use this if possible  (.exists() is unstable in Rust 1.0.0)
-/*      if !path.as_path().exists() || !path.is_file() {
-            println!("Configuration file not found. Generating a default one.");
-            let default = SettingsInJson::default_settings();
-            default.save();
-            return default;
-        }
-        let file = File::open(&path).unwrap();
-        let mut reader = BufReader::new(file);
-*/
-        let file = File::open(&path);
-        match file {
-            Err(e) => {
-                println!("Configuration file can't be open ({}). Try to generate a default one.", e);
-                let default = SettingsInJson::default_settings();
-                default.save();
-                return default;
-            },
-            _ => {}
-        }
-        let mut reader = BufReader::new(file.unwrap());
-// End FIXME
+
+        // FIXME: use this if possible  (.exists() is unstable in Rust 1.0.0)
+        /*      if !path.as_path().exists() || !path.is_file() {
+                    println!("Configuration file not found. Generating a default one.");
+                    let default = SettingsInJson::default_settings();
+                    default.save();
+                    return default;
+                }
+                let file = File::open(&path).unwrap();
+                let mut reader = BufReader::new(file);
+        */
+            let file = File::open(&path);
+
+            match file {
+                Err(e) => {
+                    println!("Configuration file can't be open ({}). Try to generate a default one.", e);
+                    let default = SettingsInJson::default_settings();
+                    default.save();
+                    return default;
+                },
+                _ => {}
+            }
+
+            let mut reader = BufReader::new(file.unwrap());
+        // End FIXME
+
         let mut decoder = json::Decoder::new(json::Json::from_reader(&mut reader).unwrap());
         Decodable::decode(&mut decoder).unwrap()
     }
 
     pub fn save(&self) {
         let exe_path = current_exe();
+
         if exe_path.is_err() {
             println!("WARNING: Failed to save settings: can't find exe path.");
             return;
         }
+
         let path = exe_path.unwrap();
         let file = File::create(&path.with_file_name(SETTING_FILENAME)).unwrap();
         let mut writer = BufWriter::new(file);
@@ -260,14 +265,10 @@ impl SettingsInJson {
                 if let Err(e) = writer.write(encoded.as_bytes()) {
                     println!("WARNING: Failed to save settings: {}", e);
                 }
-            }, Err(e) => {
+            },
+            Err(e) => {
                 println!("WARNING: Failed to save settings: {}", e);
             }
         }
-
-        // match self.encode(&mut encoder) {
-        //     Ok(()) => (),
-        //     Err(e) => { println!("WARNING: Failed to save settings: {}", e); },
-        // }
     }
 }

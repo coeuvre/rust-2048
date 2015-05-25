@@ -1,4 +1,3 @@
-
 use graphics::*;
 use opengl_graphics::GlGraphics;
 use number_renderer::NumberRenderer;
@@ -106,6 +105,7 @@ impl<'a> Tile<'a> {
     pub fn render(&self, number_renderer: &NumberRenderer, c: &Context, gl: &mut GlGraphics) {
         let mut pos = self.tile_to_pos(self.tile_x, self.tile_y);
         let mut size = (self.settings.tile_size, self.settings.tile_size);
+
         match self.status {
             TileState::TileMoving(_, x, y, _, _) => {
                 pos = (x, y);
@@ -118,6 +118,7 @@ impl<'a> Tile<'a> {
             },
             _ => {},
         }
+
         let (x, y) = pos;
         let (w, h) = size;
         let color = self.get_color();
@@ -135,6 +136,7 @@ impl<'a> Tile<'a> {
         } else {
             self.settings.text_dark_color
         };
+
         number_renderer.render(self.score as u32, x + self.settings.tile_size / 2.0, y + self.settings.tile_size / 2.0, self.settings.tile_size, color, c, gl);
     }
 

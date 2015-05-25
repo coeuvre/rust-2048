@@ -1,10 +1,6 @@
-
 use std::path::Path;
 use graphics::*;
-use opengl_graphics::{
-    GlGraphics,
-    Texture,
-};
+use opengl_graphics::{ GlGraphics, Texture };
 
 static DIGITS_WIDTH: f64 = 20.0;
 static DIGITS_HEIGHT: f64 = 26.0;
@@ -42,6 +38,7 @@ impl NumberRenderer {
                       default_draw_state(),
                       c.transform,
                       gl);
+
             x += width;
         }
     }
@@ -49,15 +46,18 @@ impl NumberRenderer {
 
 fn number_to_digits(number: u32) -> Vec<u32> {
     let mut digits = Vec::<u32>::new();
+
     if number == 0 {
         digits.push(0);
         return digits;
     }
 
     let mut n = number;
+
     while n != 0 {
         digits.insert(0, n % 10);
         n /= 10;
     }
+
     digits
 }
