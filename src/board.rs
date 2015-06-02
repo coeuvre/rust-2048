@@ -1,17 +1,10 @@
-
 use std::collections::HashSet;
-// use std::iter::range_step_inclusive;
 use rand::random;
 use graphics::*;
-use opengl_graphics::{
-    GlGraphics,
-};
+use opengl_graphics::{ GlGraphics };
 use number_renderer::NumberRenderer;
 use settings::Settings;
-use tile::{
-    Tile,
-    TileState,
-};
+use tile::{ Tile, TileState };
 
 fn rgb2rgba(c: [f32; 3]) -> [f32; 4] { [c[0], c[1], c[2], 1.0] }
 
@@ -41,6 +34,7 @@ impl<'a> Board<'a> {
         loop {
             let x = (random::<u32>() % self.settings.tile_width as u32) as i32;
             let y = (random::<u32>() % self.settings.tile_height as u32) as i32;
+
             if self.get_tile(x, y).is_none() {
                 self.tiles.push(Tile::new(self.settings, 2, x, y));
                 break;
@@ -52,20 +46,25 @@ impl<'a> Board<'a> {
         for tile in self.tiles.iter_mut() {
             tile.update(dt);
         }
-        
+
         if self.is_locking() {
             return;
         }
+
         let mut score_to_added = 0;
         let mut tiles_need_removed = HashSet::<usize>::new();
         let mut tiles_need_added = Vec::<Tile>::new();
+
         for i in 0..self.tiles.len() {
             let tile1 = &self.tiles[i];
+
             if tile1.status != TileState::TileStatic {
                 continue;
             }
+
             for j in i+1..self.tiles.len() {
                 let tile2 = &self.tiles[j];
+
                 if tile2.status != TileState::TileStatic
                   || tile1.tile_x != tile2.tile_x
                   || tile1.tile_y != tile2.tile_y {
@@ -82,15 +81,18 @@ impl<'a> Board<'a> {
 
         if tiles_need_removed.len() > 0 {
             let mut tiles = Vec::<Tile>::new();
+
             for i in 0..self.tiles.len() {
                 if !tiles_need_removed.contains(&i) {
                     tiles.push(self.tiles[i].clone());
                 }
             }
+
             // better but unstable:          tiles.append(&mut tiles_need_added);
             while let Some(tile_to_add) = tiles_need_added.pop() {
                 tiles.push(tile_to_add);
             }
+
             self.tiles = tiles;
             self.add_score(score_to_added);
         }
@@ -98,11 +100,11 @@ impl<'a> Board<'a> {
 
     pub fn render(&self, number_renderer: &NumberRenderer, c: &Context, gl: &mut GlGraphics) {
         number_renderer.render(
-        self.score as u32,
-        self.settings.best_rect[0] + self.settings.best_rect[2] / 2.0,
-        self.settings.best_rect[1] + self.settings.best_rect[3] / 2.0,
-        self.settings.best_rect[2],
-        self.settings.text_light_color, c, gl);
+            self.score as u32,
+            self.settings.best_rect[0] + self.settings.best_rect[2] / 2.0,
+            self.settings.best_rect[1] + self.settings.best_rect[3] / 2.0,
+            self.settings.best_rect[2],
+            self.settings.text_light_color, c, gl);
 
         self.render_board(c, gl);
         self.render_tiles(number_renderer, c, gl);
@@ -123,14 +125,22 @@ impl<'a> Board<'a> {
             println!("return");
             return;
         }
+
         let mut need_generate = false;
         let mut steps: Vec<i32> = Vec::with_capacity(self.settings.tile_height as usize);
+
         let mut next_step = y_start;
+
         if y_step < 0 {
-            while next_step > y_end { steps.push(next_step); next_step += y_step }
-        } else { 
-            while next_step < y_end { steps.push(next_step); next_step += y_step }
-        };
+            while next_step > y_end {
+                steps.push(next_step); next_step += y_step
+            }
+        } else {
+            while next_step < y_end {
+                steps.push(next_step); next_step += y_step
+            }
+        }
+
         loop {
             // move all tiles to right place
             for col in 0 .. self.settings.tile_width {
@@ -182,6 +192,7 @@ impl<'a> Board<'a> {
                         }
                     }
                 }
+
                 if found {
                     need_generate = true;
                     did_merged = true;
@@ -195,6 +206,7 @@ impl<'a> Board<'a> {
                 break;
             }
         }
+
         if need_generate {
             self.generate_tile();
         }
@@ -218,16 +230,21 @@ impl<'a> Board<'a> {
         let mut need_generate = false;
         let mut steps: Vec<i32> = Vec::with_capacity(self.settings.tile_width as usize);
         let mut next_step = x_start;
+
         if x_step < 0 {
-            while next_step > x_end { steps.push(next_step); next_step += x_step }
-        } else { 
-            while next_step < x_end { steps.push(next_step); next_step += x_step }
-        };
+            while next_step > x_end {
+                steps.push(next_step); next_step += x_step
+            }
+        } else {
+            while next_step < x_end {
+                steps.push(next_step); next_step += x_step
+            }
+        }
+
         loop {
             // move all tiles to right place
             for row in 0..self.settings.tile_height {
                 for col  in steps.to_vec() {
-                    
                     match self.get_mut_tile(col, row) {
                         None => {
                             match self.get_mut_next_tile(col, row, x_step, 0) {
@@ -274,6 +291,7 @@ impl<'a> Board<'a> {
                         }
                     }
                 }
+
                 if found {
                     need_generate = true;
                     did_merged = true;
@@ -325,6 +343,7 @@ impl<'a> Board<'a> {
         while x >= 0 && x < self.settings.tile_width
         && y >= 0 && y < self.settings.tile_height {
             let tile = self.get_tile(x, y);
+
             if tile.is_some() {
                 found = true;
                 break;
@@ -334,7 +353,7 @@ impl<'a> Board<'a> {
         }
 
         if found {
-        self.get_mut_tile(x, y)
+            self.get_mut_tile(x, y)
         } else {
             None
         }
@@ -346,6 +365,7 @@ impl<'a> Board<'a> {
                 return Some(tile);
             }
         }
+
         None
     }
 
@@ -355,6 +375,7 @@ impl<'a> Board<'a> {
                 return Some(tile);
             }
         }
+
         None
     }
 
@@ -365,31 +386,36 @@ impl<'a> Board<'a> {
                 count += 1;
             }
         }
+
         count
     }
 
     fn render_board(&self, c: &Context, gl: &mut GlGraphics) {
         Rectangle::new(rgb2rgba(self.settings.label_color))
-        .draw([self.settings.board_padding,
-        self.settings.board_padding + self.settings.board_offset_y,
-        self.settings.board_size[0],
-        self.settings.board_size[1]],
-        default_draw_state(),
-        c.transform,
-        gl);
-        
+        .draw(
+            [self.settings.board_padding,
+            self.settings.board_padding + self.settings.board_offset_y,
+            self.settings.board_size[0],
+            self.settings.board_size[1]],
+            default_draw_state(),
+            c.transform,
+            gl);
+
         let mut x = self.settings.board_padding + self.settings.tile_padding;
         let mut y = self.settings.board_padding + self.settings.board_offset_y + self.settings.tile_padding;
+
         for _ in 0..self.settings.tile_height {
             for _ in 0..self.settings.tile_width {
-                Rectangle::new(rgb2rgba(self.settings.tiles_colors[0]))
-                  .draw([x, y, self.settings.tile_size, self.settings.tile_size],
-                  default_draw_state(),
-                  c.transform,
-                  gl);
+                Rectangle::new(
+                    rgb2rgba(self.settings.tiles_colors[0]))
+                    .draw([x, y, self.settings.tile_size, self.settings.tile_size],
+                    default_draw_state(),
+                    c.transform,
+                    gl);
 
                 x += self.settings.tile_padding + self.settings.tile_size;
             }
+
             x = self.settings.board_padding + self.settings.tile_padding;
             y += self.settings.tile_padding + self.settings.tile_size;
         }

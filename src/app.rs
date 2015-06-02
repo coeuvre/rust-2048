@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::path::{ Path, PathBuf };
 
 use graphics::*;
 use piston::input::Button;
@@ -7,11 +7,7 @@ use piston::event::*;
 use board::Board;
 use number_renderer::NumberRenderer;
 use settings::Settings;
-use opengl_graphics::{
-    GlGraphics,
-    Texture,
-};
-
+use opengl_graphics::{ GlGraphics, Texture };
 
 pub struct App<'a> {
     board: Board<'a>,
@@ -94,7 +90,6 @@ impl<'a> App<'a> {
     }
 
     pub fn render(&mut self, args: &RenderArgs, gl: &mut GlGraphics) {
-
         let ref c = Context::abs(args.width as f64, args.height as f64);
 
         let w_bg_col = self.window_background_color;
