@@ -36,10 +36,10 @@ impl<'a> Board<'a> {
             let y = (random::<u32>() % self.settings.tile_height as u32) as i32;
 
             if self.get_tile(x, y).is_none() {
-                let score = if random::<u32>() % 2 == 0 {
-                    2
-                } else {
+                let score = if random::<u32>() % 10 == 0 {
                     4
+                } else {
+                    2
                 };
                 self.tiles.push(Tile::new(self.settings, score, x, y));
                 break;
