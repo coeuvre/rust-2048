@@ -1,22 +1,20 @@
 use std::path::{ Path, PathBuf };
 
-use graphics::*;
-use piston::input::Button;
-use piston::event::*;
-
+use piston_window::*;
+use opengl_graphics::GlGraphics;
+use opengl_graphics::Texture as GlTexture;
 use board::Board;
 use number_renderer::NumberRenderer;
 use settings::Settings;
-use opengl_graphics::{ GlGraphics, Texture };
 
 pub struct App<'a> {
     board: Board<'a>,
     number_renderer: Option<NumberRenderer>,
     settings: &'a Settings,
 
-    logo: Option<Texture>,
-    comment1: Option<Texture>,
-    comment2: Option<Texture>,
+    logo: Option<GlTexture>,
+    comment1: Option<GlTexture>,
+    comment2: Option<GlTexture>,
     window_background_color: [f32; 4],
 }
 
@@ -36,10 +34,8 @@ impl<'a> App<'a> {
         }
     }
 
-    fn render_ui(&self, c: &Context, gl: &mut GlGraphics) {
-        use graphics::*;
-
-        Image::new_colored(rgb2rgba(self.settings.text_dark_color))
+    fn render_ui(&self, c: &Context, gl: &mut GlGraphics) {		
+        Image::new_color(rgb2rgba(self.settings.text_dark_color))
             .draw(self.logo.iter().next().unwrap(),
                   default_draw_state(),
                   c.trans(self.settings.board_padding,self.settings.board_padding).transform,
@@ -59,12 +55,12 @@ impl<'a> App<'a> {
         App::render_comment(self.settings, comment2, comment2_offset_y, c, gl);
     }
 
-    fn render_comment(settings: &Settings, comment: &Texture, y: f64, c: &Context, gl: &mut GlGraphics) {
+    fn render_comment(settings: &Settings, comment: &GlTexture, y: f64, c: &Context, gl: &mut GlGraphics) {
         let (width, height) = comment.get_size();
         let w = settings.window_size[0] as f64 - 2.0 * settings.board_padding;
         let h = height as f64 * w / width as f64;
 
-        Image::new_colored(rgb2rgba(settings.text_dark_color))
+        Image::new_color(rgb2rgba(settings.text_dark_color))
             .rect([settings.board_padding, y, w, h])
             .draw( comment,
                    default_draw_state(),
@@ -84,13 +80,13 @@ impl<'a> App<'a> {
         comment2_path.push(Path::new("comment2.png"));
 
         self.number_renderer = Some(NumberRenderer::new());
-        self.logo = Some(Texture::from_path(&logo_path).unwrap());
-        self.comment1 = Some(Texture::from_path(&comment1_path).unwrap());
-        self.comment2 = Some(Texture::from_path(&comment2_path).unwrap());
+        self.logo = Some(GlTexture::from_path(&logo_path).unwrap());
+        self.comment1 = Some(GlTexture::from_path(&comment1_path).unwrap());
+        self.comment2 = Some(GlTexture::from_path(&comment2_path).unwrap());
     }
 
     pub fn render(&mut self, args: &RenderArgs, gl: &mut GlGraphics) {
-        let ref c = Context::abs(args.width as f64, args.height as f64);
+        let ref c = Context::new_abs(args.width as f64, args.height as f64);
 
         let w_bg_col = self.window_background_color;
         let ref nr = self.number_renderer;
@@ -108,9 +104,9 @@ impl<'a> App<'a> {
     }
 
     pub fn key_press(&mut self, args: &Button) {
-        use piston::input::Button::Keyboard;
-        use piston::input::keyboard::Key;
-
+		use piston_window::Button::Keyboard;
+		use piston_window::Key;		
+		
         if *args == Keyboard(Key::Left) {
             self.board.merge_from_right_to_left();
         }

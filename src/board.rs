@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use rand::random;
-use graphics::*;
-use opengl_graphics::{ GlGraphics };
+use piston_window::*;
+use opengl_graphics::GlGraphics;
 use number_renderer::NumberRenderer;
 use settings::Settings;
 use tile::{ Tile, TileState };

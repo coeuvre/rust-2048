@@ -1,4 +1,4 @@
-use graphics::*;
+use piston_window::*;
 use opengl_graphics::GlGraphics;
 use number_renderer::NumberRenderer;
 use settings::Settings;
