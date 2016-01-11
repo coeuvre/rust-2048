@@ -1,15 +1,11 @@
 extern crate rustc_serialize;
 extern crate rand;
-
-extern crate graphics;
-extern crate piston;
+extern crate piston_window;
 extern crate opengl_graphics;
 extern crate sdl2_window;
 
-use piston::event::*;
-use piston::window::{ WindowSettings, Size };
+use piston_window::*;
 use sdl2_window::Sdl2Window;
-use opengl_graphics::{ GlGraphics, OpenGL };
 
 mod app;
 mod board;
@@ -18,25 +14,26 @@ mod settings;
 mod tile;
 
 fn main() {
+	use opengl_graphics::GlGraphics;	
     let settings = settings::Settings::load();
 
-    let window = Sdl2Window::new(
-        OpenGL::_3_2,
-        WindowSettings::new(
-            "Rust-2048".to_string(),
-            Size { width: settings.window_size[0], height: settings.window_size[1] })
+	let (width, height) = (settings.window_size[0], 
+	                       settings.window_size[1]);
+
+    let window: PistonWindow<(), Sdl2Window> = 
+        WindowSettings::new("Rust-2048", [width, height])
             .exit_on_esc(true)
-    );
+            .opengl(OpenGL::V3_2)
+            .build()
+            .unwrap_or_else(|e| { panic!("Failed to build PistonWindow: {}", e) });
 
     let mut app = app::App::new(&settings);
 
     app.load();
 
-    let mut gl = GlGraphics::new(OpenGL::_3_2);
+    let mut gl = GlGraphics::new(OpenGL::V3_2);
 
     for e in window.events() {
-        use piston::event::{ RenderEvent, PressEvent };
-
         if let Some(ref args) = e.render_args() {
             app.render(args, &mut gl);
         }

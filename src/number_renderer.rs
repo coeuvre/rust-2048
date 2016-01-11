@@ -1,18 +1,19 @@
 use std::path::Path;
-use graphics::*;
-use opengl_graphics::{ GlGraphics, Texture };
+use piston_window::*;
+use opengl_graphics::GlGraphics;
+use opengl_graphics::Texture as GlTexture;
 
 static DIGITS_WIDTH: f64 = 20.0;
 static DIGITS_HEIGHT: f64 = 26.0;
 
 pub struct NumberRenderer {
-    image: Texture,
+    image: GlTexture,
 }
 
 impl NumberRenderer {
     pub fn new() -> NumberRenderer {
         NumberRenderer {
-            image: Texture::from_path(Path::new("bin/assets/digits.png")).unwrap(),
+            image: GlTexture::from_path(Path::new("bin/assets/digits.png")).unwrap(),
         }
     }
 
@@ -31,7 +32,7 @@ impl NumberRenderer {
         let y = center_y - height / 2.0;
 
         for digit in digits.iter() {
-            Image::new_colored([color[0], color[1], color[2], 1.0])
+            Image::new_color([color[0], color[1], color[2], 1.0])
                 .src_rect([(*digit * DIGITS_WIDTH as u32) as i32, 0, DIGITS_WIDTH as i32, DIGITS_HEIGHT as i32])
                 .rect([x, y, width, height])
                 .draw(&self.image,
