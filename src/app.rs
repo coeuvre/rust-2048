@@ -37,13 +37,13 @@ impl<'a> App<'a> {
     fn render_ui(&self, c: &Context, gl: &mut GlGraphics) {		
         Image::new_color(rgb2rgba(self.settings.text_dark_color))
             .draw(self.logo.iter().next().unwrap(),
-                  default_draw_state(),
+                  &DrawState::default(),
                   c.trans(self.settings.board_padding,self.settings.board_padding).transform,
                   gl);
 
         Rectangle::new(rgb2rgba(self.settings.label_color))
             .draw(self.settings.best_rect,
-                  default_draw_state(),
+                  &DrawState::default(),
                   c.transform,
                   gl);
 
@@ -63,7 +63,7 @@ impl<'a> App<'a> {
         Image::new_color(rgb2rgba(settings.text_dark_color))
             .rect([settings.board_padding, y, w, h])
             .draw( comment,
-                   default_draw_state(),
+                   &DrawState::default(),
                    c.transform,
                    gl);
     }

@@ -36,7 +36,7 @@ impl NumberRenderer {
                 .src_rect([(*digit * DIGITS_WIDTH as u32) as i32, 0, DIGITS_WIDTH as i32, DIGITS_HEIGHT as i32])
                 .rect([x, y, width, height])
                 .draw(&self.image,
-                      default_draw_state(),
+                      &DrawState::default(),
                       c.transform,
                       gl);
 

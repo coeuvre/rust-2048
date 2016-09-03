@@ -127,7 +127,7 @@ impl<'a> Tile<'a> {
             .draw(rectangle::centered([x + self.settings.tile_size / 2.0,
                                        y + self.settings.tile_size / 2.,
                                        w/2.0, h/2.0]),
-                  default_draw_state(),
+                  &DrawState::default(),
                   c.transform,
                   gl);
 
