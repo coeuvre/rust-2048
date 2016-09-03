@@ -2,7 +2,6 @@
 name = "rust-2048"
 version = "0.0.0"
 dependencies = [
- "piston2d-graphics 0.17.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "piston2d-opengl_graphics 0.32.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "piston_window 0.52.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "pistoncore-sdl2_window 0.34.0 (registry+https://github.com/rust-lang/crates.io-index)",

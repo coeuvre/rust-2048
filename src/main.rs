@@ -1,7 +1,6 @@
 extern crate rustc_serialize;
 extern crate rand;
 extern crate piston_window;
-extern crate graphics;
 extern crate opengl_graphics;
 extern crate sdl2_window;
 
