@@ -12,13 +12,6 @@ path = "src/main.rs"
 [dependencies]
 rustc-serialize = "0.3"
 rand = "0.3.7"
-
-[dependencies.piston_window]
-git = "https://github.com/pistondevelopers/piston_window"
-
-[dependencies.piston2d-opengl_graphics]
-git = "https://github.com/PistonDevelopers/opengl_graphics.git"
-
-[dependencies.pistoncore-sdl2_window]
-git = "https://github.com/pistondevelopers/sdl2_window"
-
+piston_window = "0.52.0"
+pistoncore-sdl2_window = "0.34.0"
+piston2d-opengl_graphics = "0.32.0"

@@ -20,10 +20,10 @@ fn main() {
 	let (width, height) = (settings.window_size[0], 
 	                       settings.window_size[1]);
 
-    let window: PistonWindow<(), Sdl2Window> = 
+    // according to piston WindowSettings documentation, OpenGL::V3_2 is the default version
+    let mut window: PistonWindow<Sdl2Window> =
         WindowSettings::new("Rust-2048", [width, height])
             .exit_on_esc(true)
-            .opengl(OpenGL::V3_2)
             .build()
             .unwrap_or_else(|e| { panic!("Failed to build PistonWindow: {}", e) });
 
@@ -33,7 +33,7 @@ fn main() {
 
     let mut gl = GlGraphics::new(OpenGL::V3_2);
 
-    for e in window.events() {
+    while let Some(e) = window.next() {
         if let Some(ref args) = e.render_args() {
             app.render(args, &mut gl);
         }

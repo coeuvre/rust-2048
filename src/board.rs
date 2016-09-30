@@ -402,7 +402,7 @@ impl<'a> Board<'a> {
             self.settings.board_padding + self.settings.board_offset_y,
             self.settings.board_size[0],
             self.settings.board_size[1]],
-            default_draw_state(),
+            &DrawState::default(),
             c.transform,
             gl);
 
@@ -414,7 +414,7 @@ impl<'a> Board<'a> {
                 Rectangle::new(
                     rgb2rgba(self.settings.tiles_colors[0]))
                     .draw([x, y, self.settings.tile_size, self.settings.tile_size],
-                    default_draw_state(),
+                    &DrawState::default(),
                     c.transform,
                     gl);
 
