@@ -33,7 +33,7 @@ impl NumberRenderer {
 
         for digit in digits.iter() {
             Image::new_color([color[0], color[1], color[2], 1.0])
-                .src_rect([(*digit * DIGITS_WIDTH as u32) as i32, 0, DIGITS_WIDTH as i32, DIGITS_HEIGHT as i32])
+                .src_rect([(*digit * DIGITS_WIDTH as u32) as f64, 0 as f64, DIGITS_WIDTH as f64, DIGITS_HEIGHT as f64])
                 .rect([x, y, width, height])
                 .draw(&self.image,
                       &DrawState::default(),
