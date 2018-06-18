@@ -10,7 +10,7 @@ name = "rust-2048"
 path = "src/main.rs"
 
 [dependencies]
-rustc-serialize = "0.3"
+rustc-serialize = "0.3.24"
 rand = "0.3.7"
 piston_window = "0.61.0"
 pistoncore-sdl2_window = "0.38.0"
