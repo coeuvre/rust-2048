@@ -1,4 +1,5 @@
-extern crate rustc_serialize;
+#[macro_use]
+extern crate serde_derive;
 extern crate rand;
 extern crate piston_window;
 extern crate opengl_graphics;
