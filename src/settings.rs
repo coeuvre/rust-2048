@@ -1,9 +1,8 @@
-
 use std::env::current_exe;
-use std::io::{BufWriter, BufReader, Write};
+use std::io::{BufWriter, BufReader};
 use std::fs::{File};
 use std::path::Path;
-use rustc_serialize::{ json, Encodable, Decodable };
+use serde_json as json;
 
 static SETTING_FILENAME: &'static str = "settings.json";
 
@@ -125,7 +124,7 @@ impl Settings {
     }
 }
 
-#[derive(RustcEncodable, RustcDecodable)]
+#[derive(Serialize, Deserialize)]
 struct SettingsInJson {
     asset_folder: String,
 
@@ -182,6 +181,7 @@ impl SettingsInJson {
         tiles_colors.push(vec![237.0, 204.0, 97.0]);
         // 512 color
         tiles_colors.push(vec![237.0, 200.0, 80.0]);
+        
         SettingsInJson {
             asset_folder: "bin/assets".to_string(),
             window_background_color: vec![255.0, 248.0, 239.0],
@@ -229,23 +229,22 @@ impl SettingsInJson {
                 let file = File::open(&path).unwrap();
                 let mut reader = BufReader::new(file);
         */
-            let file = File::open(&path);
+        let file = File::open(&path);
 
-            match file {
-                Err(e) => {
-                    println!("Configuration file can't be open ({}). Try to generate a default one.", e);
-                    let default = SettingsInJson::default_settings();
-                    default.save();
-                    return default;
-                },
-                _ => {}
-            }
+        match file {
+            Err(e) => {
+                println!("Configuration file can't be open ({}). Try to generate a default one.", e);
+                let default = SettingsInJson::default_settings();
+                default.save();
+                return default;
+            },
+            _ => {}
+        }
 
-            let mut reader = BufReader::new(file.unwrap());
+        let reader = BufReader::new(file.unwrap());
         // End FIXME
 
-        let mut decoder = json::Decoder::new(json::Json::from_reader(&mut reader).unwrap());
-        Decodable::decode(&mut decoder).unwrap()
+        json::from_reader(reader).unwrap()
     }
 
     pub fn save(&self) {
@@ -258,16 +257,14 @@ impl SettingsInJson {
 
         let path = exe_path.unwrap();
         let file = File::create(&path.with_file_name(SETTING_FILENAME)).unwrap();
-        let mut writer = BufWriter::new(file);
+        let writer = BufWriter::new(file);
 
-        match json::encode(self) {
-            Ok(encoded) => {
-                if let Err(e) = writer.write(encoded.as_bytes()) {
-                    println!("WARNING: Failed to save settings: {}", e);
-                }
+        match json::to_writer(writer, self) {
+            Ok(_) => {
+                println!("Successfully saved settings.");
             },
             Err(e) => {
-                println!("WARNING: Failed to save settings: {}", e);
+                 println!("WARNING: Failed to save settings: {}", e);
             }
         }
     }

@@ -1,8 +1,11 @@
-extern crate rustc_serialize;
 extern crate rand;
 extern crate piston_window;
 extern crate opengl_graphics;
 extern crate sdl2_window;
+extern crate serde_json;
+
+#[macro_use]
+extern crate serde_derive;
 
 use piston_window::*;
 use sdl2_window::Sdl2Window;
