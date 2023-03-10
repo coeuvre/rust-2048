@@ -13,7 +13,10 @@ pub struct NumberRenderer {
 impl NumberRenderer {
     pub fn new() -> NumberRenderer {
         NumberRenderer {
-            image: GlTexture::from_path(Path::new("bin/assets/digits.png")).unwrap(),
+            image: GlTexture::from_path(
+                    Path::new("bin/assets/digits.png"),
+                    &TextureSettings::new(),
+            ).unwrap(),
         }
     }
 
