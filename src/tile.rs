@@ -6,7 +6,7 @@ use settings::Settings;
 #[derive(Clone, PartialEq)]
 pub enum TileState {
     TileStatic,
-    /// (t, x, y, origin_x, origin_x)
+    /// (t, x, y, origin_x, origin_y)
     TileMoving(f64, f64, f64, i32, i32),
     /// (t, size)
     TileNew(f64, f64),
