@@ -80,13 +80,15 @@ impl<'a> App<'a> {
         comment2_path.push(Path::new("comment2.png"));
 
         self.number_renderer = Some(NumberRenderer::new());
-        self.logo = Some(GlTexture::from_path(&logo_path).unwrap());
-        self.comment1 = Some(GlTexture::from_path(&comment1_path).unwrap());
-        self.comment2 = Some(GlTexture::from_path(&comment2_path).unwrap());
+        let texture_settings = TextureSettings::new();
+        self.logo = Some(GlTexture::from_path(&logo_path, &texture_settings).unwrap());
+        self.comment1 = Some(GlTexture::from_path(&comment1_path, &texture_settings).unwrap());
+        self.comment2 = Some(GlTexture::from_path(&comment2_path, &texture_settings).unwrap());
     }
 
     pub fn render(&mut self, args: &RenderArgs, gl: &mut GlGraphics) {
-        let ref c = Context::new_abs(args.width as f64, args.height as f64);
+        let area = args.window_size;
+        let ref c = Context::new_abs(area[0], area[1]);
 
         let w_bg_col = self.window_background_color;
         let ref nr = self.number_renderer;
@@ -105,7 +107,6 @@ impl<'a> App<'a> {
 
     pub fn key_press(&mut self, args: &Button) {
 		use piston_window::Button::Keyboard;
-		use piston_window::Key;		
 		
         if *args == Keyboard(Key::Left) {
             self.board.merge_from_right_to_left();
