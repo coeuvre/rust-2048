@@ -1,7 +1,8 @@
 [package]
 
 name = "rust-2048"
-version = "0.0.0"
+version = "0.0.1"
+build = "build.rs"
 authors = ["coeuvre <coeuvre@gmail.com>"]
 
 [[bin]]
@@ -10,8 +11,12 @@ name = "rust-2048"
 path = "src/main.rs"
 
 [dependencies]
-rustc-serialize = "0.3"
+serde = { version = "1.0", features = ["derive"]}
 rand = "0.3.7"
 piston_window = "0.127.0"
 pistoncore-sdl2_window = "0.68.0"
 piston2d-opengl_graphics = "0.82.0"
+serde-generate = "0.25.0"
+json = "0.12.4"
+serde_json = "1.0.94"
+serde_derive = "1.0.158"

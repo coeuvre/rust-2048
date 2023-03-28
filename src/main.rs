@@ -1,4 +1,4 @@
-extern crate rustc_serialize;
+extern crate serde;
 extern crate rand;
 extern crate piston_window;
 extern crate opengl_graphics;
@@ -20,7 +20,6 @@ fn main() {
 	let (width, height) = (settings.window_size[0], 
 	                       settings.window_size[1]);
 
-    // according to piston WindowSettings documentation, OpenGL::V3_2 is the default version
     let mut window: PistonWindow<Sdl2Window> =
         WindowSettings::new("Rust-2048", [width, height])
             .exit_on_esc(true)
@@ -39,8 +38,6 @@ fn main() {
         }
 
         if let Some(ref args) = e.update_args() {
-           // TODO: only update if necessary
-           // println!("update");
            app.update(args);
         }
 

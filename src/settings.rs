@@ -1,9 +1,8 @@
-
+use serde::{Deserialize, Serialize};
 use std::env::current_exe;
-use std::io::{BufWriter, BufReader, Write};
-use std::fs::{File};
+use std::fs::File;
+use std::io::{BufReader, BufWriter, Write};
 use std::path::Path;
-use rustc_serialize::{ json, Encodable, Decodable };
 
 static SETTING_FILENAME: &'static str = "settings.json";
 
@@ -125,7 +124,7 @@ impl Settings {
     }
 }
 
-#[derive(RustcEncodable, RustcDecodable)]
+#[derive(Serialize, Deserialize, Debug)]
 struct SettingsInJson {
     asset_folder: String,
 
@@ -219,16 +218,6 @@ impl SettingsInJson {
         exe_path.pop();
         let path = exe_path.join(Path::new(SETTING_FILENAME));
 
-        // FIXME: use this if possible  (.exists() is unstable in Rust 1.0.0)
-        /*      if !path.as_path().exists() || !path.is_file() {
-                    println!("Configuration file not found. Generating a default one.");
-                    let default = SettingsInJson::default_settings();
-                    default.save();
-                    return default;
-                }
-                let file = File::open(&path).unwrap();
-                let mut reader = BufReader::new(file);
-        */
             let file = File::open(&path);
 
             match file {
@@ -242,11 +231,11 @@ impl SettingsInJson {
             }
 
             let mut reader = BufReader::new(file.unwrap());
-        // End FIXME
 
-        let mut decoder = json::Decoder::new(json::Json::from_reader(&mut reader).unwrap());
-        Decodable::decode(&mut decoder).unwrap()
+        let decoder = serde_json::from_reader(&mut reader).unwrap();
+        decoder
     }
+    
 
     pub fn save(&self) {
         let exe_path = current_exe();
@@ -260,7 +249,7 @@ impl SettingsInJson {
         let file = File::create(&path.with_file_name(SETTING_FILENAME)).unwrap();
         let mut writer = BufWriter::new(file);
 
-        match json::encode(self) {
+        match serde_json::to_string(self) {
             Ok(encoded) => {
                 if let Err(e) = writer.write(encoded.as_bytes()) {
                     println!("WARNING: Failed to save settings: {}", e);

@@ -93,7 +93,6 @@ impl<'a> Board<'a> {
                 }
             }
 
-            // better but unstable:          tiles.append(&mut tiles_need_added);
             while let Some(tile_to_add) = tiles_need_added.pop() {
                 tiles.push(tile_to_add);
             }

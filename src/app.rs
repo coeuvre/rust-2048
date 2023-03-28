@@ -1,5 +1,4 @@
 use std::path::{ Path, PathBuf };
-
 use piston_window::*;
 use opengl_graphics::GlGraphics;
 use opengl_graphics::Texture as GlTexture;
